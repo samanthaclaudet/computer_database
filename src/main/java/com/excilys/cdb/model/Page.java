@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import com.excilys.cdb.dto.ComputerDTO;
+import com.excilys.cdb.dto.DTOMapper;
 import com.excilys.cdb.persistence.ComputerDAOImpl;
 
 /**
@@ -21,26 +23,53 @@ public class Page {
 
 	private int nbComputerPerPage; // set at instantiation, can't be changed after
 	private int nbPages;
-	private List<Computer> computerList;
+	private List<ComputerDTO> computers;
 	private int idx = 0; // the number of the page we are currently on
 	private boolean hasNext, hasPrevious;
-	
+	private int[] range;
 	public Page() {}
 	
 	public Page(int nbPerPage, int nbComputers) {
 		this.nbComputerPerPage = nbPerPage;
 		this.nbPages = (int)Math.ceil((double)nbComputers/(double)nbPerPage);
-		computerList = new ArrayList<Computer>();
+		this.computers = new ArrayList<ComputerDTO>();
 		this.hasNext = true;
 		this.hasPrevious = false;
+		this.range = new int[] {Math.max(0, idx-5), Math.min(nbPages, idx+5)};
 	}
 	
-	public List<Computer> getComputerList() {
-		return computerList;
+	public Page(int nbPerPage, int nbComputers, int idx) {
+		this.nbComputerPerPage = nbPerPage;
+		this.idx = idx;
+		this.nbPages = (int)Math.ceil((double)nbComputers/(double)nbPerPage);
+		this.computers = new ArrayList<ComputerDTO>();
+		this.hasNext = true;
+		this.hasPrevious = false;
+		this.range = new int[] {Math.max(0, idx-5), Math.min(nbPages, idx+5)};
 	}
 	
-	public void setComputerList(List<Computer> c) {
-		this.computerList = c;
+	public int[] getRange() {
+		return this.range;
+	}
+
+	public int getIdx() {
+		return this.idx;
+	}
+	
+	public void setIdx(int idx) {
+		this.idx = idx;
+	}
+	
+	public List<ComputerDTO> getComputers() {
+		return computers;
+	}
+	
+	public void setComputers(List<Computer> comp) {
+		List<ComputerDTO> computersDTO = new ArrayList<ComputerDTO>();
+	    for(Computer c : comp) {
+	    	computersDTO.add(DTOMapper.computerToDTO(c));
+	    }
+		this.computers = computersDTO;
 	}
 	
 	public int getNbComputerPerPage() {
@@ -57,7 +86,7 @@ public class Page {
 	 */
 	public String toString() {
 		String pageToString = "Page #"+(this.idx+1)+"/"+this.nbPages+"\n\n";
-		for (Computer c : computerList) {
+		for (ComputerDTO c : computers) {
 			if (c != null) {
 				pageToString += c.toString()+"\n";
 			}
@@ -77,7 +106,7 @@ public class Page {
 			} else {
 				hasPrevious = true;
 			}
-			setComputerList(ComputerDAOImpl.INSTANCE.getPerPage(idx, nbComputerPerPage));
+			setComputers(ComputerDAOImpl.INSTANCE.getPerPage(idx, nbComputerPerPage));
 		 	System.out.println(this.toString());
 		} else {
 			System.out.println("Last page !");
@@ -96,7 +125,7 @@ public class Page {
 			} else {
 				hasNext = true;
 			}
-			setComputerList(ComputerDAOImpl.INSTANCE.getPerPage(idx, nbComputerPerPage));
+			setComputers(ComputerDAOImpl.INSTANCE.getPerPage(idx, nbComputerPerPage));
 			System.out.println(this.toString());
 		} else {
 			System.out.println("First page !");
@@ -110,7 +139,7 @@ public class Page {
 		idx = 0;
 		hasNext = true;
 		hasPrevious = false;
-		setComputerList(ComputerDAOImpl.INSTANCE.getPerPage(idx, nbComputerPerPage));
+		setComputers(ComputerDAOImpl.INSTANCE.getPerPage(idx, nbComputerPerPage));
 		System.out.println(this.toString());
 	}
 	
@@ -121,7 +150,7 @@ public class Page {
 		idx = nbPages-1;
 		hasNext = false;
 		hasPrevious = true;
-		setComputerList(ComputerDAOImpl.INSTANCE.getPerPage(idx, nbComputerPerPage));
+		setComputers(ComputerDAOImpl.INSTANCE.getPerPage(idx, nbComputerPerPage));
 		System.out.println(this.toString());
 	}
 	
@@ -138,7 +167,7 @@ public class Page {
 	 * @param sc
 	 */
 	public void menuPage(Scanner sc) {
-		setComputerList(ComputerDAOImpl.INSTANCE.getPerPage(idx, nbComputerPerPage));
+		setComputers(ComputerDAOImpl.INSTANCE.getPerPage(idx, nbComputerPerPage));
 		System.out.println(this.toString());
 		boolean end = false;
 		do {

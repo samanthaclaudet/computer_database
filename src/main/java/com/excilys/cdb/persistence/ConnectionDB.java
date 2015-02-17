@@ -63,14 +63,14 @@ public enum ConnectionDB {
 	 */
 	public static void closeConnection(Connection conn, PreparedStatement pstm, ResultSet rs) {
 		try {
-			if (conn!=null) {
-				conn.close();
+			if (rs!=null) {
+				rs.close();
 			}
 			if (pstm!=null) {
 				pstm.close();
 			}
-			if (rs!=null) {
-				rs.close();
+			if (conn!=null) {
+				conn.close();
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();

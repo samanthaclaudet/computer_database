@@ -246,7 +246,7 @@ public class CLI {
 			System.out.println("Please enter the new date, format yyyy-MM-dd HH:mm (null if unknown)");
 			// check validity of input
 			LocalDateTime ldti = Util.checkDate(sc);
-			c.setDate_introduced(ldti);
+			c.setIntroduced(ldti);
 		}
 		// update the date of discontinuation
 		System.out.println("Do you want to change the date of discontinuation ? Y/N");
@@ -255,7 +255,7 @@ public class CLI {
 			System.out.println("Please enter the new date, format yyyy-MM-dd HH:mm (null if unknown)");
 			// check validity of input
 			LocalDateTime ldtd = Util.checkDate(sc);
-			c.setDate_discontinued(ldtd);
+			c.setDiscontinued(ldtd);
 		}
 		// update the company
 		System.out.println("Do you want to change the company ? Y/N");
@@ -264,7 +264,7 @@ public class CLI {
 			System.out.println("Please enter the id of the new company (0 if unknown)");
 			// check validity of input
 			Company cy = Util.checkCompany(sc);
-			c.setManufacturer(cy);
+			c.setCompany(cy);
 		}
 		return c;
 	}

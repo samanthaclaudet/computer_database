@@ -84,6 +84,21 @@ public class Util {
 	}
 	
 	/**
+	 * Check if the user input is a valid date or null
+	 * @param date
+	 * 			a String
+	 * @return a valid LocalDateTime or null
+	 */
+	public static LocalDateTime checkDate(String date) {
+		LocalDateTime ldt = null;
+		date = date.replace('T', ' ');
+		if (P.matcher(date).find()) {
+            ldt = LocalDateTime.parse(date, FORMATTER);
+        }
+		return ldt;
+	}	
+	
+	/**
 	 * Check if the user input matches a valid Company
 	 * @param sc
 	 * 			the scanner

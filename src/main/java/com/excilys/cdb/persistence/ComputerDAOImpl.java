@@ -154,23 +154,23 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			pstm = conn.prepareStatement("INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?, ?, ?, ?)");
 			pstm.setString(1, c.getName());
 			// the date of introduction can be null
-			if (c.getDate_introduced()!=null) {
+			if (c.getIntroduced()!=null) {
 				// converts LocalDateTime into a Timestamp
-				pstm.setTimestamp(2, Timestamp.valueOf(c.getDate_introduced()));
+				pstm.setTimestamp(2, Timestamp.valueOf(c.getIntroduced()));
 			} else {
 				pstm.setNull(2, java.sql.Types.TIMESTAMP);
 			}
 			// the date of discontinuation can be null
-			if (c.getDate_discontinued()!=null) {
+			if (c.getDiscontinued()!=null) {
 				// converts LocalDateTime into a Timestamp
-				pstm.setTimestamp(3, Timestamp.valueOf(c.getDate_discontinued()));
+				pstm.setTimestamp(3, Timestamp.valueOf(c.getDiscontinued()));
 			} else {
 				pstm.setNull(3, java.sql.Types.TIMESTAMP);
 			}
 			// the company can be null
-			if (c.getManufacturer()!=null) {
+			if (c.getCompany()!=null) {
 				// retrieves the company's id
-				pstm.setInt(4, c.getManufacturer().getId());
+				pstm.setInt(4, c.getCompany().getId());
 			} else {
 				pstm.setNull(4, java.sql.Types.BIGINT);
 			}
@@ -202,23 +202,23 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			pstm = conn.prepareStatement("UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?");
 			pstm.setString(1, c.getName());
 			// the date of introduction can be null
-			if (c.getDate_introduced()!=null) {
+			if (c.getIntroduced()!=null) {
 				// converts LocalDateTime into a Timestamp
-				pstm.setTimestamp(2, Timestamp.valueOf(c.getDate_introduced()));
+				pstm.setTimestamp(2, Timestamp.valueOf(c.getIntroduced()));
 			} else {
 				pstm.setNull(2, java.sql.Types.TIMESTAMP);
 			}
 			// the date of discontinuation can be null
-			if (c.getDate_discontinued()!=null) {
+			if (c.getDiscontinued()!=null) {
 				// converts LocalDateTime into a Timestamp
-				pstm.setTimestamp(3, Timestamp.valueOf(c.getDate_discontinued()));
+				pstm.setTimestamp(3, Timestamp.valueOf(c.getDiscontinued()));
 			} else {
 				pstm.setNull(3, java.sql.Types.TIMESTAMP);
 			}
 			// the company can be null
-			if (c.getManufacturer()!=null) {
+			if (c.getCompany()!=null) {
 				// retrieves the company's id
-				pstm.setInt(4, c.getManufacturer().getId());
+				pstm.setInt(4, c.getCompany().getId());
 			} else {
 				pstm.setNull(4, java.sql.Types.BIGINT);
 			}

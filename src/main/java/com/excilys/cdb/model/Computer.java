@@ -19,9 +19,9 @@ import java.time.LocalDateTime;
 public class Computer {
 	private final int id;
 	private String name;
-	private LocalDateTime date_introduced;
-	private LocalDateTime date_discontinued;
-	private Company manufacturer;
+	private LocalDateTime introduced;
+	private LocalDateTime discontinued;
+	private Company company;
 	
 	public Computer() {
 		this.id = 0;
@@ -34,14 +34,14 @@ public class Computer {
 	 * @param name
 	 * @param date_introduced
 	 * @param date_discontinued
-	 * @param manufacturer
+	 * @param company
 	 */
-	public Computer(int id, String name, LocalDateTime date_introduced, LocalDateTime date_discontinued, Company manufacturer) {
+	public Computer(int id, String name, LocalDateTime date_introduced, LocalDateTime date_discontinued, Company company) {
 		this.id = id;
 		this.name = name;
-		this.date_introduced = date_introduced;
-		this.date_discontinued = date_discontinued;
-		this.manufacturer = manufacturer;
+		this.introduced = date_introduced;
+		this.discontinued = date_discontinued;
+		this.company = company;
 	}
 	
 	/**
@@ -50,14 +50,14 @@ public class Computer {
 	 * @param name
 	 * @param date_introduced
 	 * @param date_discontinued
-	 * @param manufacturer
+	 * @param company
 	 */
-	public Computer(String name, LocalDateTime date_introduced, LocalDateTime date_discontinued, Company manufacturer) {
+	public Computer(String name, LocalDateTime date_introduced, LocalDateTime date_discontinued, Company company) {
 		this.id = 0;
 		this.name = name;
-		this.date_introduced = date_introduced;
-		this.date_discontinued = date_discontinued;
-		this.manufacturer = manufacturer;
+		this.introduced = date_introduced;
+		this.discontinued = date_discontinued;
+		this.company = company;
 	}
 	
 	/**
@@ -88,32 +88,32 @@ public class Computer {
 	 * 
 	 * @return the computer's date of introduction (LocalDateTime)
 	 */
-	public LocalDateTime getDate_introduced() {
-		return date_introduced;
+	public LocalDateTime getIntroduced() {
+		return introduced;
 	}
 	
 	/**
 	 * 
 	 * @param date_introduced
 	 */
-	public void setDate_introduced(LocalDateTime date_introduced) {
-		this.date_introduced = date_introduced;
+	public void setIntroduced(LocalDateTime dateIntroduced) {
+		this.introduced = dateIntroduced;
 	}
 	
 	/**
 	 * 
 	 * @return the computer's date of discontinuation (LocalDateTime)
 	 */
-	public LocalDateTime getDate_discontinued() {
-		return date_discontinued;
+	public LocalDateTime getDiscontinued() {
+		return discontinued;
 	}
 	
 	/**
 	 * 
 	 * @param date_discontinued
 	 */
-	public void setDate_discontinued(LocalDateTime date_discontinued) {
-		this.date_discontinued = date_discontinued;
+	public void setDiscontinued(LocalDateTime dateDiscontinued) {
+		this.discontinued = dateDiscontinued;
 	}
 	
 	/**
@@ -121,40 +121,39 @@ public class Computer {
 	 * @return the computer's company
 	 * @see Company
 	 */
-	public Company getManufacturer() {
-		return manufacturer;
+	public Company getCompany() {
+		return company;
 	}
 	
 	/**
 	 * 
-	 * @param manufacturer
-	 * 			a company
+	 * @param company
 	 * @see Company
 	 */
-	public void setManufacturer(Company manufacturer) {
-		this.manufacturer = manufacturer;
+	public void setCompany(Company company) {
+		this.company = company;
 	}
 	
 	/**
-	 * The representation is "Computer#ID	name : NAME		introduced : DATE_INTRODUCED		discontinued : DATE_DISCONTINUED		manufacturer : MANUFACTURER"
+	 * The representation is "Computer#ID	name : NAME		introduced : DATE_INTRODUCED		discontinued : DATE_DISCONTINUED		company : COMPANY"
 	 * 
 	 * @return String
 	 */
 	public String toString() {
 		String computerToString = "Computer #"+this.id;
 		computerToString += "\t name : "+this.name;
-		if (this.date_introduced !=null)
-			computerToString += "\t\t introduced : "+this.date_introduced.toString();
+		if (this.introduced !=null)
+			computerToString += "\t\t introduced : "+this.introduced.toString();
 		else
 			computerToString += "\t\t introduced : null";
-		if (this.date_discontinued !=null)
-			computerToString += "\t\t discontinued : "+this.date_discontinued.toString();
+		if (this.discontinued !=null)
+			computerToString += "\t\t discontinued : "+this.discontinued.toString();
 		else
 			computerToString += "\t\t discontinued : null";
-		if (this.manufacturer !=null)
-			computerToString += "\t\t manufacturer : "+this.manufacturer.toString();
+		if (this.company !=null)
+			computerToString += "\t\t company : "+this.company.toString();
 		else
-			computerToString += "\t\t manufacturer : null";
+			computerToString += "\t\t company : null";
 		return computerToString;
 	}
 
@@ -164,13 +163,13 @@ public class Computer {
 		int result = 1;
 		result = prime
 				* result
-				+ ((date_discontinued == null) ? 0 : date_discontinued
+				+ ((discontinued == null) ? 0 : discontinued
 						.hashCode());
 		result = prime * result
-				+ ((date_introduced == null) ? 0 : date_introduced.hashCode());
+				+ ((introduced == null) ? 0 : introduced.hashCode());
 		result = prime * result + id;
 		result = prime * result
-				+ ((manufacturer == null) ? 0 : manufacturer.hashCode());
+				+ ((company == null) ? 0 : company.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}
@@ -184,22 +183,22 @@ public class Computer {
 		if (getClass() != obj.getClass())
 			return false;
 		Computer other = (Computer) obj;
-		if (date_discontinued == null) {
-			if (other.date_discontinued != null)
+		if (discontinued == null) {
+			if (other.discontinued != null)
 				return false;
-		} else if (!date_discontinued.equals(other.date_discontinued))
+		} else if (!discontinued.equals(other.discontinued))
 			return false;
-		if (date_introduced == null) {
-			if (other.date_introduced != null)
+		if (introduced == null) {
+			if (other.introduced != null)
 				return false;
-		} else if (!date_introduced.equals(other.date_introduced))
+		} else if (!introduced.equals(other.introduced))
 			return false;
 		if (id != other.id)
 			return false;
-		if (manufacturer == null) {
-			if (other.manufacturer != null)
+		if (company == null) {
+			if (other.company != null)
 				return false;
-		} else if (!manufacturer.equals(other.manufacturer))
+		} else if (!company.equals(other.company))
 			return false;
 		if (name == null) {
 			if (other.name != null)
