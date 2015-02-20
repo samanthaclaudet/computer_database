@@ -13,12 +13,12 @@ package com.excilys.cdb.model;
 public class Company {
 	private final int id;
 	private final String name;
-	
+
 	public Company() {
 		this.id = 0;
 		this.name = null;
 	}
-	
+
 	/**
 	 * 
 	 * @param id
@@ -49,7 +49,7 @@ public class Company {
 	 * The representation is "Company#ID	name : NAME"
 	 */
 	public String toString() {
-		return "Company #"+this.id+"\t name : "+this.name;
+		return "Company #" + this.id + "\t name : " + this.name;
 	}
 
 	public int hashCode() {
@@ -77,7 +77,5 @@ public class Company {
 			return false;
 		return true;
 	}
-	
-	
-	
+
 }

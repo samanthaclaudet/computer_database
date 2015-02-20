@@ -27,3 +27,15 @@ input[type='checkbox'] {
     border-radius: 5px;
     white-space: nowrap;
 }
+
+.errorintroduced {
+	color: red;
+	font-family : Verdana;
+    font-size : 8pt;
+}
+
+.errordiscontinued {
+	color: red;
+	font-family : Verdana;
+    font-size : 8pt;
+}

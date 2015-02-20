@@ -2,6 +2,10 @@ package com.excilys.cdb.model;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.NotBlank;
+
 /**
  * Computer is composed of :
  * <ul>
@@ -11,6 +15,7 @@ import java.time.LocalDateTime;
  * <li>a date of discontinuation (can be null)</li>
  * <li>a company</li>
  * </ul>
+ * 
  * @see Company
  * 
  * @author sclaudet
@@ -18,15 +23,19 @@ import java.time.LocalDateTime;
  */
 public class Computer {
 	private final int id;
+	@NotBlank
 	private String name;
+	@Pattern(regexp = "^(19|20)[0-9][0-9](-)((0[1-9])|(1[0-2]))(-)((0[1-9])|([1-2][0-9])|(3[0-1]))(T|\\s)(([0-1][0-9])|(2[0-3])):([0-5][0-9])",
+					message = "Date format incorrect")
 	private LocalDateTime introduced;
+	//@Date
 	private LocalDateTime discontinued;
 	private Company company;
-	
+
 	public Computer() {
 		this.id = 0;
 	}
-	
+
 	/**
 	 * Constructor with id, used for updating
 	 * 
@@ -36,14 +45,15 @@ public class Computer {
 	 * @param date_discontinued
 	 * @param company
 	 */
-	public Computer(int id, String name, LocalDateTime date_introduced, LocalDateTime date_discontinued, Company company) {
+	public Computer(int id, String name, LocalDateTime date_introduced,
+			LocalDateTime date_discontinued, Company company) {
 		this.id = id;
 		this.name = name;
 		this.introduced = date_introduced;
 		this.discontinued = date_discontinued;
 		this.company = company;
 	}
-	
+
 	/**
 	 * Constructor without id, used for inserting
 	 * 
@@ -52,14 +62,15 @@ public class Computer {
 	 * @param date_discontinued
 	 * @param company
 	 */
-	public Computer(String name, LocalDateTime date_introduced, LocalDateTime date_discontinued, Company company) {
+	public Computer(String name, LocalDateTime date_introduced,
+			LocalDateTime date_discontinued, Company company) {
 		this.id = 0;
 		this.name = name;
 		this.introduced = date_introduced;
 		this.discontinued = date_discontinued;
 		this.company = company;
 	}
-	
+
 	/**
 	 * 
 	 * @return the computer's id (int)
@@ -67,7 +78,7 @@ public class Computer {
 	public int getId() {
 		return id;
 	}
-	
+
 	/**
 	 * 
 	 * @return the computer's name (String)
@@ -75,7 +86,7 @@ public class Computer {
 	public String getName() {
 		return name;
 	}
-	
+
 	/**
 	 * 
 	 * @param name
@@ -83,7 +94,7 @@ public class Computer {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * 
 	 * @return the computer's date of introduction (LocalDateTime)
@@ -91,7 +102,7 @@ public class Computer {
 	public LocalDateTime getIntroduced() {
 		return introduced;
 	}
-	
+
 	/**
 	 * 
 	 * @param date_introduced
@@ -99,7 +110,7 @@ public class Computer {
 	public void setIntroduced(LocalDateTime dateIntroduced) {
 		this.introduced = dateIntroduced;
 	}
-	
+
 	/**
 	 * 
 	 * @return the computer's date of discontinuation (LocalDateTime)
@@ -107,7 +118,7 @@ public class Computer {
 	public LocalDateTime getDiscontinued() {
 		return discontinued;
 	}
-	
+
 	/**
 	 * 
 	 * @param date_discontinued
@@ -115,7 +126,7 @@ public class Computer {
 	public void setDiscontinued(LocalDateTime dateDiscontinued) {
 		this.discontinued = dateDiscontinued;
 	}
-	
+
 	/**
 	 * 
 	 * @return the computer's company
@@ -124,7 +135,7 @@ public class Computer {
 	public Company getCompany() {
 		return company;
 	}
-	
+
 	/**
 	 * 
 	 * @param company
@@ -133,25 +144,28 @@ public class Computer {
 	public void setCompany(Company company) {
 		this.company = company;
 	}
-	
+
 	/**
-	 * The representation is "Computer#ID	name : NAME		introduced : DATE_INTRODUCED		discontinued : DATE_DISCONTINUED		company : COMPANY"
+	 * The representation is
+	 * "Computer#ID	name : NAME		introduced : DATE_INTRODUCED		discontinued : DATE_DISCONTINUED		company : COMPANY"
 	 * 
 	 * @return String
 	 */
 	public String toString() {
-		String computerToString = "Computer #"+this.id;
-		computerToString += "\t name : "+this.name;
-		if (this.introduced !=null)
-			computerToString += "\t\t introduced : "+this.introduced.toString();
+		String computerToString = "Computer #" + this.id;
+		computerToString += "\t name : " + this.name;
+		if (this.introduced != null)
+			computerToString += "\t\t introduced : "
+					+ this.introduced.toString();
 		else
 			computerToString += "\t\t introduced : null";
-		if (this.discontinued !=null)
-			computerToString += "\t\t discontinued : "+this.discontinued.toString();
+		if (this.discontinued != null)
+			computerToString += "\t\t discontinued : "
+					+ this.discontinued.toString();
 		else
 			computerToString += "\t\t discontinued : null";
-		if (this.company !=null)
-			computerToString += "\t\t company : "+this.company.toString();
+		if (this.company != null)
+			computerToString += "\t\t company : " + this.company.toString();
 		else
 			computerToString += "\t\t company : null";
 		return computerToString;
@@ -161,15 +175,12 @@ public class Computer {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime
-				* result
-				+ ((discontinued == null) ? 0 : discontinued
-						.hashCode());
+		result = prime * result
+				+ ((discontinued == null) ? 0 : discontinued.hashCode());
 		result = prime * result
 				+ ((introduced == null) ? 0 : introduced.hashCode());
 		result = prime * result + id;
-		result = prime * result
-				+ ((company == null) ? 0 : company.hashCode());
+		result = prime * result + ((company == null) ? 0 : company.hashCode());
 		result = prime * result + ((name == null) ? 0 : name.hashCode());
 		return result;
 	}

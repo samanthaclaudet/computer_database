@@ -9,12 +9,11 @@ import java.sql.SQLException;
  */
 public class Launcher {
 
-
 	public static void main(String[] args) throws SQLException {
 		CLI.run();
-		
+
 		System.out.println("End of programm");
 		System.exit(0);
 	}
-	
+
 }

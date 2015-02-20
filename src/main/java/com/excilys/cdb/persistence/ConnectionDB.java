@@ -6,21 +6,23 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import com.excilys.cdb.utilsdb.DatabaseName;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.excilys.cdb.utilsdb.DatabaseProperties;
 
 /**
- * ConnectionDB is used to get a connection with the database and to close it when the query is done
+ * ConnectionDB is used to get a connection with the database and to close it
+ * when the query is done
  * 
  * @author sclaudet
  *
  */
 public enum ConnectionDB {
 	INSTANCE;
-	
-	// change database depending on if run program or run tests
-	private static final String URL = "jdbc:mysql://127.0.0.1:3306/"+DatabaseName.INSTANCE.getDatabaseName()+"?zeroDateTimeBehavior=convertToNull";
-	private static final String USER = "admincdb";
-	private static final String PASSWD = "qwerty1234";
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(ConnectionDB.class);
 
 	/**
 	 * This constructor is called only once
@@ -29,53 +31,61 @@ public enum ConnectionDB {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 		} catch (Exception e) {
+			// TODO
+			// logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		}
 	}
-	
+
 	/**
-	 * Gives a connection
-	 * url, user and password are defined as constants
+	 * Gives a connection url, user and password are defined as constants
 	 * 
 	 * @return a connection
 	 */
 	public static Connection getConnection() {
 		Connection conn = null;
 		try {
-			conn = DriverManager.getConnection(URL, USER, PASSWD);
-		} catch (SQLException e) {
+			// change database depending on if run program or run tests
+			conn = DriverManager.getConnection(
+					DatabaseProperties.INSTANCE.getDatabaseUrl(),
+					DatabaseProperties.INSTANCE.getDatabaseUser(),
+					DatabaseProperties.INSTANCE.getDatabasePassword());
+		} catch (Exception e) {
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		}
 		return conn;
 	}
-	
+
 	/**
 	 * Closes all elements used for the query
 	 * 
 	 * @param conn
-	 * 			the connection you want to close
+	 *            the connection you want to close
 	 * @param pstm
-	 * 			the preparedStatement you want to close
+	 *            the preparedStatement you want to close
 	 * @param rs
-	 * 			the resultset you want to close
+	 *            the resultset you want to close
 	 */
-	public static void closeConnection(Connection conn, PreparedStatement pstm, ResultSet rs) {
+	public static void closeConnection(Connection conn, PreparedStatement pstm,
+			ResultSet rs) {
 		try {
-			if (rs!=null) {
+			if (rs != null) {
 				rs.close();
 			}
-			if (pstm!=null) {
+			if (pstm != null) {
 				pstm.close();
 			}
-			if (conn!=null) {
+			if (conn != null) {
 				conn.close();
 			}
 		} catch (SQLException e) {
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		}
 	}
-	
+
 }

@@ -6,19 +6,19 @@ import java.util.Scanner;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.model.Page;
-import com.excilys.cdb.persistence.CompanyDAOImpl;
-import com.excilys.cdb.persistence.ComputerDAOImpl;
+//import com.excilys.cdb.model.Page;
+import com.excilys.cdb.service.CompanyServiceImpl;
+import com.excilys.cdb.service.ComputerServiceImpl;
 
 /**
  * CLI is the user interface of the computer-database program
  * <ul>
- * <li> List all computers (result can be pageable) </li>
- * <li> List all companies </li>
- * <li> Show the details of a specific computer </li>
- * <li> Add a new computer to the database </li>
- * <li> Update a computer in the database </li>
- * <li> Delete a computer from the database </li>
+ * <li>List all computers (result can be pageable)</li>
+ * <li>List all companies</li>
+ * <li>Show the details of a specific computer</li>
+ * <li>Add a new computer to the database</li>
+ * <li>Update a computer in the database</li>
+ * <li>Delete a computer from the database</li>
  * </ul>
  * 
  * @author sclaudet
@@ -50,7 +50,8 @@ public class CLI {
 		System.out.println("Press 4 -> Create a computer");
 		System.out.println("Press 5 -> Update a computer");
 		System.out.println("Press 6 -> Delete a computer");
-		System.out.println("Press 7 -> Exit \n");
+		System.out.println("Press 7 -> Delete a company");
+		System.out.println("Press 8 -> Exit \n");
 	}
 	
 	/**
@@ -80,8 +81,8 @@ public class CLI {
 				String answer = sc.nextLine();
 				if (answer.toUpperCase().matches("Y")) {
 					// displays result in a page
-					Page p = new Page(100,  ComputerDAOImpl.INSTANCE.getNbComputers()); // 100 computers per page
-					p.menuPage(sc);			
+					//Page p = new Page(100,  ComputerServiceImpl.INSTANCE.getNbComputers()); // 100 computers per page
+					//p.menuPage(sc);			
 				}
 				else {
 					listComputers();
@@ -107,8 +108,12 @@ public class CLI {
 			case "6" : 
 				deleteComputer();
 				return true;
+			// deletes a computer
+			case "7" : 
+				deleteCompany();
+				return true;
 			// exit the program
-			case "7" :
+			case "8" :
 				runProgram = false;
 				return true;
 			// user input is not valid
@@ -120,11 +125,11 @@ public class CLI {
 	
 	/**
 	 * Displays the list of all computers
-	 * @see ComputerDAO#getAll()
+	 * @see ComputerService#getAll()
 	 */
 	public static void listComputers() {
 		List<Computer> CL;
-		CL = ComputerDAOImpl.INSTANCE.getAll();
+		CL = ComputerServiceImpl.INSTANCE.getAll();
 		for(Computer c : CL ) {
 			System.out.println(c);
 		}
@@ -132,11 +137,11 @@ public class CLI {
 	
 	/**
 	 * Displays the list of all companies
-	 * @see CompanyDAO#getAll()
+	 * @see CompanyService#getAll()
 	 */
 	public static void listCompanies() {
 		List<Company> CL;
-		CL = CompanyDAOImpl.INSTANCE.getAll();
+		CL = CompanyServiceImpl.INSTANCE.getAll();
 		for(Company c : CL ) {
 			System.out.println(c);
 		}
@@ -144,14 +149,14 @@ public class CLI {
 	
 	/**
 	 * Displays the details of one computer
-	 * @see ComputerDAO#getById(int)
+	 * @see ComputerService#getById(int)
 	 */
 	public static void showComputer() {
 		System.out.println("What is the id of the computer you want to display ?");
 		// check validity of input
 		int id = Util.checkId(sc);
 
-		Computer c = ComputerDAOImpl.INSTANCE.getById(id);
+		Computer c = ComputerServiceImpl.INSTANCE.getById(id);
 		if (c != null) {
 			System.out.println(c);
 		} else {
@@ -161,18 +166,18 @@ public class CLI {
 	
 	/**
 	 * Adds a computer to the database
-	 * @see ComputerDAO#set(Computer)
+	 * @see ComputerService#set(Computer)
 	 */
 	public static void createComputer() {
 		// put the user input into a Computer object
 		Computer c = setComputerData();
 		System.out.println("Computer to add: " + c);
-		ComputerDAOImpl.INSTANCE.set(c);
+		ComputerServiceImpl.INSTANCE.set(c);
 	}
 	
 	/**
 	 * Updates a computer in the database
-	 * @see ComputerDAO#update(int, Computer)
+	 * @see ComputerService#update(int, Computer)
 	 */
 	public static void updateComputer() {
 		System.out.println("What is the id of the computer you want to modify ?");
@@ -180,11 +185,11 @@ public class CLI {
 		int id = Util.checkId(sc);
 		Computer newc = null;
 		// put the current entry into a Computer object
-		Computer c = ComputerDAOImpl.INSTANCE.getById(id);
+		Computer c = ComputerServiceImpl.INSTANCE.getById(id);
 		if (c != null) {
 			// put the user entry into a new Computer object
 			newc = updateComputerData(c);
-			ComputerDAOImpl.INSTANCE.update(id, newc);
+			ComputerServiceImpl.INSTANCE.update(id, newc);
 		} else {
 			System.out.println("Wrong id, no computer found");
 		}
@@ -192,13 +197,24 @@ public class CLI {
 	
 	/**
 	 * Deletes a computer from the database
-	 * @see ComputerDAO#delete(int)
+	 * @see ComputerService#delete(int)
 	 */
 	public static void deleteComputer(){
 		System.out.println("What is the id of the computer you want to delete ?");
 		// check validity of input
 		int id = Util.checkId(sc);
-		ComputerDAOImpl.INSTANCE.delete(id);
+		ComputerServiceImpl.INSTANCE.delete(id);
+	}
+	
+	/**
+	 * Deletes a company from the database and all the related computers
+	 * @see CompanyService#delete(int)
+	 */
+	public static void deleteCompany(){
+		System.out.println("What is the id of the company you want to delete ?");
+		// check validity of input
+		int id = Util.checkId(sc);
+		CompanyServiceImpl.INSTANCE.delete(id);
 	}
 	
 	/**

@@ -5,22 +5,30 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.Page;
+import com.excilys.cdb.persistence.interfaces.ComputerDAO;
 import com.excilys.cdb.ui.Util;
 
 /**
  * ComputerDAO makes the connection between the database and the Computer object
- * This is a singleton
- *  * The available methods are :
+ * This is a singleton * The available methods are :
  * <ul>
- * <li> getAll()</li>
- * <li> getById(int id)</li>
- * <li> set(Computer c)</li>
- * <li> update(int id, Computer c)</li>
- * <li> delete(int id)</li>
+ * <li>getAll()</li>
+ * <li>getById(int id)</li>
+ * <li>getNbComputers()</li>
+ * <li>getPage(int idx, int size)</li>
+ * <li>set(Computer c)</li>
+ * <li>update(int id, Computer c)</li>
+ * <li>delete(int id)</li>
  * </ul>
+ * 
  * @see Computer
  * 
  * @author sclaudet
@@ -28,9 +36,13 @@ import com.excilys.cdb.ui.Util;
  */
 public enum ComputerDAOImpl implements ComputerDAO {
 	INSTANCE;
-	
-	private ComputerDAOImpl() {}
-	
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(ComputerDAOImpl.class);
+
+	private ComputerDAOImpl() {
+	}
+
 	/**
 	 * Counts the number of computers in the database
 	 * 
@@ -38,17 +50,17 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	 */
 	public int getNbComputers() {
 		int nb = 0;
-		Connection conn = null;
+		Connection conn = ConnectionDB.getConnection();
 		PreparedStatement pstm = null;
 		ResultSet r = null;
 		try {
-			conn = ConnectionDB.getConnection();
 			pstm = conn.prepareStatement("SELECT COUNT(*) FROM computer");
 			r = pstm.executeQuery();
 			if (r.next()) {
 				nb = r.getInt(1);
 			}
 		} catch (SQLException e) {
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
@@ -56,36 +68,40 @@ public enum ComputerDAOImpl implements ComputerDAO {
 		}
 		return nb;
 	}
-	
+
 	/**
-	 * Gets a list of computers pageable
+	 * Gets a page
 	 * 
-	 * @param idx 
-	 * 			offest for the select query
+	 * @param idx
+	 *            offest for the select query
 	 * @param size
-	 * 			number of computers selected
-	 * @return a list of limited size of computers
+	 *            number of computers per page
+	 * @return a page
 	 */
-	public List<Computer> getPerPage(int idx, int size){
+	public Page getPage(int idx, int size) {
 		List<Computer> lc = null;
-		Connection conn = null;
+		Connection conn = ConnectionDB.getConnection();;
 		PreparedStatement pstm = null;
 		ResultSet r = null;
 		try {
-			conn = ConnectionDB.getConnection();
 			pstm = conn.prepareStatement("SELECT * FROM computer ORDER BY id LIMIT ?, ?");
-			pstm.setInt(1, idx*size);
+			pstm.setInt(1, idx * size);
 			pstm.setInt(2, size);
 			r = pstm.executeQuery();
 			// mapping the ResultSet into a list of computers
 			lc = ComputerMapper.INSTANCE.toList(r);
 		} catch (SQLException e) {
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
 			ConnectionDB.closeConnection(conn, pstm, r);
 		}
-		return lc;
+		
+		Page p = new Page(size, getNbComputers(), idx);
+		p.setComputers(lc);
+		
+		return p;
 	}
 	
 	/**
@@ -93,18 +109,18 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	 * 
 	 * @return the list of all computers in the database
 	 */
-	public List<Computer> getAll(){
+	public List<Computer> getAll() {
 		List<Computer> lc = null;
-		Connection conn = null;
+		Connection conn = ConnectionDB.getConnection();
 		PreparedStatement pstm = null;
 		ResultSet r = null;
 		try {
-			conn = ConnectionDB.getConnection();
 			pstm = conn.prepareStatement("SELECT * FROM computer");
 			r = pstm.executeQuery();
 			// mapping the ResultSet into a list of computers
 			lc = ComputerMapper.INSTANCE.toList(r);
 		} catch (SQLException e) {
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
@@ -112,26 +128,28 @@ public enum ComputerDAOImpl implements ComputerDAO {
 		}
 		return lc;
 	}
-	
+
 	/**
 	 * Gets a Computer by its id
 	 * 
 	 * @param id
 	 * @return a Computer whose id was passed as parameter
 	 */
-	public Computer getById(int id){
+	public Computer getById(int id) {
 		Computer c = null;
-		Connection conn = null;
+		Connection conn = ConnectionDB.getConnection();
 		PreparedStatement pstm = null;
 		ResultSet r = null;
 		try {
-			conn = ConnectionDB.getConnection();
 			pstm = conn.prepareStatement("SELECT * FROM computer WHERE id = ?");
 			pstm.setInt(1, id);
 			r = pstm.executeQuery();
 			// mapping the ResultSet into a computer
-			c = ComputerMapper.INSTANCE.toObject(r);
+			if (r.next()) {
+				c = ComputerMapper.INSTANCE.toObject(r);
+			}
 		} catch (SQLException e) {
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
@@ -139,36 +157,90 @@ public enum ComputerDAOImpl implements ComputerDAO {
 		}
 		return c;
 	}
+
+	/**
+	 * Gets Computers by their name
+	 * 
+	 * @param name
+	 * @return a Page with all computers containing the name
+	 */
+	public Page getByName(String name, int idx, int size) {
+		name = "%" + name + "%";
+		List<Computer> lc = null;
+		Connection conn = ConnectionDB.getConnection();
+		PreparedStatement pstm = null, pstm2 = null;
+		ResultSet r = null;
+		int nb;
+		try {
+			pstm = conn.prepareStatement("SELECT * FROM computer WHERE name LIKE ? ORDER BY id LIMIT ?, ?");
+			pstm.setString(1, name);
+			pstm.setInt(2, idx * size);
+			pstm.setInt(3, size);
+			r = pstm.executeQuery();
+			if (!r.next()) {
+				nb = 0;
+				lc = new ArrayList<Computer>();
+			} else {
+				r.previous();
+				// mapping the ResultSet into a list of computers
+				lc = ComputerMapper.INSTANCE.toList(r);
+				
+				pstm2 = conn.prepareStatement("SELECT COUNT(*) FROM computer WHERE name LIKE ?");
+				pstm2.setString(1, name);
+				r = pstm2.executeQuery();
+				r.next();
+				nb = r.getInt(1);
+			}
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			throw new RuntimeException();
+		} finally {
+			try {
+				if (pstm2 != null) {
+					pstm2.close();
+				}
+			} catch (SQLException e) {
+				logger.error(e.getMessage());
+				e.printStackTrace();
+				throw new RuntimeException();
+			}
+			ConnectionDB.closeConnection(conn, pstm, r);
+		}
+		Page p = new Page(size, nb, idx);
+		p.setComputers(lc);
+		return p;
+	}
 	
 	/**
 	 * Inserts the computer passed in parameter into the database
 	 * 
 	 * @param c
-	 * 			the computer you want to add in the database
+	 *            the computer you want to add in the database
 	 */
-	public void set(Computer c){
-		Connection conn = null;
+	public void set(Computer c) {
+		Connection conn = ConnectionDB.getConnection();
 		PreparedStatement pstm = null;
 		try {
-			conn = ConnectionDB.getConnection();
-			pstm = conn.prepareStatement("INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?, ?, ?, ?)");
+			pstm = conn
+					.prepareStatement("INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?, ?, ?, ?)");
 			pstm.setString(1, c.getName());
 			// the date of introduction can be null
-			if (c.getIntroduced()!=null) {
+			if (c.getIntroduced() != null) {
 				// converts LocalDateTime into a Timestamp
 				pstm.setTimestamp(2, Timestamp.valueOf(c.getIntroduced()));
 			} else {
 				pstm.setNull(2, java.sql.Types.TIMESTAMP);
 			}
 			// the date of discontinuation can be null
-			if (c.getDiscontinued()!=null) {
+			if (c.getDiscontinued() != null) {
 				// converts LocalDateTime into a Timestamp
 				pstm.setTimestamp(3, Timestamp.valueOf(c.getDiscontinued()));
 			} else {
 				pstm.setNull(3, java.sql.Types.TIMESTAMP);
 			}
 			// the company can be null
-			if (c.getCompany()!=null) {
+			if (c.getCompany() != null) {
 				// retrieves the company's id
 				pstm.setInt(4, c.getCompany().getId());
 			} else {
@@ -179,44 +251,46 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			// displays "success" or "failure"
 			Util.checkSuccess(queryExecuted);
 		} catch (SQLException e) {
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
 			ConnectionDB.closeConnection(conn, pstm, null);
 		}
 	}
-	
+
 	/**
-	 * Replaces the computer in the database at the id passed in parameter by the computer passed in parameter
+	 * Replaces the computer in the database at the id passed in parameter by
+	 * the computer passed in parameter
 	 * 
 	 * @param id
-	 * 			the id of the computer you want to modify in the database
+	 *            the id of the computer you want to modify in the database
 	 * @param c
-	 * 			the new computer that will replace the one in the database
+	 *            the new computer that will replace the one in the database
 	 */
-	public void update(int id, Computer c){
-		Connection conn = null;
+	public void update(int id, Computer c) {
+		Connection conn = ConnectionDB.getConnection();
 		PreparedStatement pstm = null;
 		try {
-			conn = ConnectionDB.getConnection();
-			pstm = conn.prepareStatement("UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?");
+			pstm = conn
+					.prepareStatement("UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?");
 			pstm.setString(1, c.getName());
 			// the date of introduction can be null
-			if (c.getIntroduced()!=null) {
+			if (c.getIntroduced() != null) {
 				// converts LocalDateTime into a Timestamp
 				pstm.setTimestamp(2, Timestamp.valueOf(c.getIntroduced()));
 			} else {
 				pstm.setNull(2, java.sql.Types.TIMESTAMP);
 			}
 			// the date of discontinuation can be null
-			if (c.getDiscontinued()!=null) {
+			if (c.getDiscontinued() != null) {
 				// converts LocalDateTime into a Timestamp
 				pstm.setTimestamp(3, Timestamp.valueOf(c.getDiscontinued()));
 			} else {
 				pstm.setNull(3, java.sql.Types.TIMESTAMP);
 			}
 			// the company can be null
-			if (c.getCompany()!=null) {
+			if (c.getCompany() != null) {
 				// retrieves the company's id
 				pstm.setInt(4, c.getCompany().getId());
 			} else {
@@ -228,34 +302,35 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			// displays "success" or "failure"
 			Util.checkSuccess(queryExecuted);
 		} catch (SQLException e) {
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
 			ConnectionDB.closeConnection(conn, pstm, null);
 		}
 	}
-	
+
 	/**
 	 * Deletes a computer from the database at the id passed in parameter
 	 * 
 	 * @param id
-	 * 			the id of the computer you want to delete
+	 *            the id of the computer you want to delete
 	 */
 	public void delete(int id) {
-		Connection conn = null;
+		Connection conn = ConnectionDB.getConnection();
 		PreparedStatement pstm = null;
 		try {
-			conn = ConnectionDB.getConnection();
-			pstm = conn.prepareStatement("DELETE FROM computer WHERE id="+id);
+			pstm = conn.prepareStatement("DELETE FROM computer WHERE id=" + id);
 			int queryExecuted = pstm.executeUpdate();
 			// displays "success" or "failure"
 			Util.checkSuccess(queryExecuted);
 		} catch (SQLException e) {
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
 			ConnectionDB.closeConnection(conn, pstm, null);
 		}
 	}
-	
+
 }
