@@ -48,10 +48,28 @@ public enum DatabaseProperties {
 		Properties prop = getProperties();
 		return prop.getProperty("DB_URL");
 	}
-
+	
 	public String getDatabasePassword() {
 		Properties prop = getProperties();
 		return prop.getProperty("DB_PASSWD");
+	}
+	
+	public int getBoneCPMin() {
+		Properties prop = getProperties();
+		String s = prop.getProperty("MIN_CONNECTIONS_PER_PARTITION");
+		return Integer.parseInt(s);
+	}
+	
+	public int getBoneCPMax() {
+		Properties prop = getProperties();
+		String s = prop.getProperty("MAX_CONNECTIONS_PER_PARTITION");
+		return Integer.parseInt(s);
+	}
+
+	public int getBoneCPPartitions() {
+		Properties prop = getProperties();
+		String s = prop.getProperty("NB_PARTITIONS");
+		return Integer.parseInt(s);
 	}
 
 }

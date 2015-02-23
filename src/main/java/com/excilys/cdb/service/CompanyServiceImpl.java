@@ -1,9 +1,16 @@
 package com.excilys.cdb.service;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.persistence.CompanyDAOImpl;
+import com.excilys.cdb.persistence.ComputerDAOImpl;
+import com.excilys.cdb.persistence.ConnectionDB;
 import com.excilys.cdb.service.interfaces.CompanyService;
 
 /**
@@ -15,6 +22,9 @@ import com.excilys.cdb.service.interfaces.CompanyService;
 public enum CompanyServiceImpl implements CompanyService {
 	INSTANCE;
 
+	private static final Logger logger = LoggerFactory
+			.getLogger(CompanyServiceImpl.class);
+	
 	private CompanyServiceImpl() {
 	}
 
@@ -45,7 +55,30 @@ public enum CompanyServiceImpl implements CompanyService {
 	 *            the id of the company you want to delete
 	 */
 	public void delete(int id) {
-		CompanyDAOImpl.INSTANCE.delete(id);
+		Connection conn = ConnectionDB.getConnection();		
+		try {
+			conn.setAutoCommit(false);
+			ComputerDAOImpl.INSTANCE.delete(id, conn);
+			CompanyDAOImpl.INSTANCE.delete(id, conn);
+			conn.commit();
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+
+			if (conn != null) {
+				try {
+					System.err.print("Transaction is being rolled back");
+			        conn.rollback();
+				} catch(SQLException excep) {
+			      	logger.error(e.getMessage());
+			       	e.printStackTrace();
+			       	throw new RuntimeException();
+			    }
+			}
+			throw new RuntimeException();
+		} finally {
+			ConnectionDB.closeConnection(conn, null, null);
+		}
 	}
 	
 }

@@ -1,10 +1,12 @@
 package com.excilys.cdb.persistence;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import com.jolbox.bonecp.BoneCP;
+import com.jolbox.bonecp.BoneCPConfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,18 +23,28 @@ import com.excilys.cdb.utilsdb.DatabaseProperties;
 public enum ConnectionDB {
 	INSTANCE;
 
+	private static BoneCP connectionPool = null;
+	
 	private static final Logger logger = LoggerFactory
 			.getLogger(ConnectionDB.class);
 
-	/**
-	 * This constructor is called only once
-	 */
-	private ConnectionDB() {
+	static {
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
+			// change database depending on if run program or run tests
+			BoneCPConfig config = new BoneCPConfig();
+			config.setJdbcUrl(DatabaseProperties.INSTANCE.getDatabaseUrl());
+			config.setUsername(DatabaseProperties.INSTANCE.getDatabaseUser());
+			config.setPassword(DatabaseProperties.INSTANCE.getDatabasePassword());
+				
+			config.setMinConnectionsPerPartition(DatabaseProperties.INSTANCE.getBoneCPMin());
+			config.setMaxConnectionsPerPartition(DatabaseProperties.INSTANCE.getBoneCPMax());
+			config.setPartitionCount(DatabaseProperties.INSTANCE.getBoneCPPartitions());
+	
+			connectionPool = new BoneCP(config);
+			
 		} catch (Exception e) {
-			// TODO
-			// logger.error(e.getMessage());
+			logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		}
@@ -46,11 +58,7 @@ public enum ConnectionDB {
 	public static Connection getConnection() {
 		Connection conn = null;
 		try {
-			// change database depending on if run program or run tests
-			conn = DriverManager.getConnection(
-					DatabaseProperties.INSTANCE.getDatabaseUrl(),
-					DatabaseProperties.INSTANCE.getDatabaseUser(),
-					DatabaseProperties.INSTANCE.getDatabasePassword());
+			conn = connectionPool.getConnection();
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();

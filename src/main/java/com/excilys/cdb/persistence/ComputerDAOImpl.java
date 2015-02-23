@@ -338,4 +338,51 @@ public enum ComputerDAOImpl implements ComputerDAO {
 		}
 	}
 
+	/**
+	 * Deletes a computer from the database whose company has the id passed in parameter
+	 * 
+	 * @param id
+	 *            the id of the company you want to delete
+	 * @param conn
+	 * 			  the connection used
+	 */
+	public void delete(int id, Connection conn) {
+		PreparedStatement pstm = null;
+		try {
+			pstm = conn.prepareStatement("DELETE FROM computer WHERE company_id=" + id);
+			int queryExecuted = pstm.executeUpdate();
+			// displays "success" or "failure"
+			System.out.println(pstm.toString());
+			if (!Util.checkSuccess(queryExecuted) && conn != null) {
+				System.out.print("Transaction is being rolled back");
+				conn.rollback();
+			}
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+
+			if (conn != null) {
+	            try {
+	                System.err.print("Transaction is being rolled back");
+	                conn.rollback();
+	            } catch(SQLException excep) {
+	            	logger.error(e.getMessage());
+	            	e.printStackTrace();
+	            	throw new RuntimeException();
+	            }
+	        }
+			throw new RuntimeException();
+		} finally {
+			if (pstm != null) {
+				try {
+					pstm.close();
+				} catch (SQLException e) {
+					logger.error(e.getMessage());
+					e.printStackTrace();
+					throw new RuntimeException();
+				}
+			}
+		}
+	}
+	
 }

@@ -88,50 +88,52 @@ public enum CompanyDAOImpl implements CompanyDAO {
 		}
 		return c;
 	}
-
+	
 	/**
-	 * Deletes a company from the database at the id passed in parameter and all
-	 * the related computers
+	 * Deletes a company from the database at the id passed in parameter
 	 * 
 	 * @param id
 	 *            the id of the company you want to delete
+	 * @param conn
+	 * 			  the connection used
 	 */
-	public void delete(int id) {
-		Connection conn = ConnectionDB.getConnection();
-		PreparedStatement pstm = null, pstm2 = null;
-		;
+	public void delete(int id, Connection conn) {
+		PreparedStatement pstm = null;
 		try {
-			// delete all computers with the company to be deleted
-			pstm = conn
-					.prepareStatement("DELETE FROM computer WHERE company_id =" + id);
+			pstm = conn.prepareStatement("DELETE FROM company WHERE id=" + id);
+			System.out.println(pstm.toString());
 			int queryExecuted = pstm.executeUpdate();
 			// displays "success" or "failure"
-			Util.checkSuccess(queryExecuted);
-
-			// delete the company
-			pstm2 = conn
-					.prepareStatement("DELETE FROM company WHERE id =" + id);
-			queryExecuted = pstm2.executeUpdate();
-			// displays "success" or "failure"
-			Util.checkSuccess(queryExecuted);
-
+			if (!Util.checkSuccess(queryExecuted) && conn != null) {
+				System.out.print("Transaction is being rolled back");
+				conn.rollback();
+			}
 		} catch (SQLException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
-			throw new RuntimeException();
-		} finally {
-			try {
-				if (pstm2 != null) {
-					pstm2.close();
-				}
-			} catch (SQLException e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
-				throw new RuntimeException();
-			}
-			ConnectionDB.closeConnection(conn, pstm, null);
-		}
 
+			if (conn != null) {
+	            try {
+	                System.err.print("Transaction is being rolled back");
+	                conn.rollback();
+	            } catch(SQLException ex) {
+	            	logger.error(ex.getMessage());
+	            	ex.printStackTrace();
+	            	throw new RuntimeException();
+	    		} finally {
+	    			if (pstm != null) {
+	    				try {
+	    					pstm.close();
+	    				} catch (SQLException exc) {
+	    					logger.error(exc.getMessage());
+	    					exc.printStackTrace();
+	    					throw new RuntimeException();
+	    				}
+	    			}
+	    		}
+	        }
+			throw new RuntimeException();
+		} 
 	}
 
 }

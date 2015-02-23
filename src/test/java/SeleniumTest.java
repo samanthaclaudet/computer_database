@@ -20,7 +20,7 @@ public class SeleniumTest {
 	public static void setUp() {
 		DatabaseLoader.INSTANCE.load();
 		driver = new FirefoxDriver();
-		baseUrl = "http://localhost:8080/cdb/";
+		baseUrl = "http://localhost:8080/cdb/dashboard";
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		driver.get(baseUrl);
 	}
@@ -42,7 +42,7 @@ public class SeleniumTest {
 	}
 
 	@AfterClass
-	public void tearDown() throws Exception {
+	public static void tearDown() throws Exception {
 		driver.quit();
 	}
 

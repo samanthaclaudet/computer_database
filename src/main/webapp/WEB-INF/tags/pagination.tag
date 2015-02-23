@@ -13,7 +13,7 @@
 	</li>
 	<c:forEach begin="${page.range[0]}" end="${page.range[1]-1}" var="index">
 		<li <c:if test="${page.idx == index}">class="active"</c:if>>
-			<a href="<mylib:link target="dashboard" index="${page.idx+1}" nbPerPage="${page.nbComputerPerPage}" search="${search}"/>">${index+1}</a>
+			<a href="<mylib:link target="dashboard" index="${index+1}" nbPerPage="${page.nbComputerPerPage}" search="${search}"/>">${index+1}</a>
 		</li>
 	</c:forEach>
 	<li <c:if test="${page.idx+1 == page.nbPages}">style="display:none;"</c:if>>

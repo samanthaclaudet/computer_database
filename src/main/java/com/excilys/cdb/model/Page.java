@@ -21,10 +21,10 @@ import com.excilys.cdb.service.ComputerServiceImpl;
  */
 public class Page {
 
-	private int nbComputers;
+	private int nbComputers; // total number of computers
 	private int nbComputerPerPage; // set at instantiation, can't be changed
 									// after
-	private int nbPages;
+	private int nbPages; // total number of pages
 	private List<ComputerDTO> computers;
 	private int idx; // the number of the page we are currently on
 	//private boolean hasNext, hasPrevious;

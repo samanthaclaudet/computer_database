@@ -151,12 +151,14 @@ public class Util {
 	 *            the value returned by the method executeUpdate() of the
 	 *            PreparedStatement
 	 */
-	public static void checkSuccess(int queryExecuted) {
+	public static boolean checkSuccess(int queryExecuted) {
 		System.out.print("Query executed ? ");
-		if (queryExecuted == 1) {
-			System.out.println(" Success");
+		if (queryExecuted == 0) {
+			System.out.println("Failed");
+			return false;
 		} else {
-			System.out.println(" Failed");
+			System.out.println("Success");
+			return true;
 		}
 	}
 
