@@ -2,9 +2,11 @@ package com.excilys.cdb.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.dto.DTOMapper;
+import com.excilys.cdb.service.ComputerServiceImpl;
 
 /**
  * Page is composed of :
@@ -167,47 +169,58 @@ public class Page {
 //				.getPerPage(idx, nbComputerPerPage));
 //		System.out.println(this.toString());
 //	}
-//
-//	/**
-//	 * Displays the menu for the page :
-//	 * <ul>
-//	 * <li>go to the first page</li>
-//	 * <li>go to the last page</li>
-//	 * <li>go to previous page</li>
-//	 * <li>go to next page</li>
-//	 * <li>exit</li>
-//	 * </ul>
-//	 * 
-//	 * @param sc
-//	 */
-//	public void menuPage(Scanner sc) {
-//		setComputers(ComputerServiceImpl.INSTANCE
-//				.getPerPage(idx, nbComputerPerPage));
-//		Systems.out.println(this.toString());
-//		boolean end = false;
-//		do {
-//			System.out.println("Previous page : P");
-//			System.out.println("Next page : N");
-//			System.out.println("First page : F");
-//			System.out.println("Last page : L");
-//			System.out.println("Exit : E");
-//			String answer = sc.nextLine();
-//			if (answer.toUpperCase().matches("P")) {
-//				this.previousPage();
-//			}
-//			if (answer.toUpperCase().matches("N")) {
-//				this.nextPage();
-//			}
-//			if (answer.toUpperCase().matches("F")) {
-//				this.firstPage();
-//			}
-//			if (answer.toUpperCase().matches("L")) {
-//				this.lastPage();
-//			}
-//			if (answer.toUpperCase().matches("E")) {
-//				end = true;
-//			}
-//		} while (!end);
-//	}
+
+	/**
+	 * Displays the menu for the page :
+	 * <ul>
+	 * <li>go to the first page</li>
+	 * <li>go to the last page</li>
+	 * <li>go to previous page</li>
+	 * <li>go to next page</li>
+	 * <li>exit</li>
+	 * </ul>
+	 * 
+	 * @param sc
+	 */
+	public void menuPage(Scanner sc) {
+
+		//setComputers(ComputerServiceImpl.INSTANCE.getPerPage(idx, nbComputerPerPage));
+		System.out.println(this.toString());
+		boolean end = false;
+		do {
+			System.out.println("Previous page : P");
+			System.out.println("Next page : N");
+			System.out.println("First page : F");
+			System.out.println("Last page : L");
+			System.out.println("Exit : E");
+			String answer = sc.nextLine();
+			if (answer.toUpperCase().matches("P")) {
+				//this.previousPage();
+				if (this.idx > 0) {
+					this.idx--;
+				}
+			}
+			if (answer.toUpperCase().matches("N")) {
+				//this.nextPage();
+				if (this.idx < nbPages) {
+					this.idx++;
+				}
+			}
+			if (answer.toUpperCase().matches("F")) {
+				//this.firstPage();
+				this.idx = 0;
+			}
+			if (answer.toUpperCase().matches("L")) {
+				//this.lastPage();
+				this.idx = this.nbPages - 1;
+			}
+			if (answer.toUpperCase().matches("E")) {
+				end = true;
+			}
+			
+			this.computers = ComputerServiceImpl.INSTANCE.getPage(this.idx, 100).getComputers();
+			System.out.println(this.toString());
+		} while (!end);
+	}
 
 }

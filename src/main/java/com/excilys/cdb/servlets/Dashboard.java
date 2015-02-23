@@ -23,18 +23,18 @@ public class Dashboard extends HttpServlet {
 	public static final String ATT_SEARCH = "search";
 	public static final String VUE = "/static/views/dashboard.jsp";
 	//private static final Logger logger = LoggerFactory.getLogger(Dashboard.class);
-	private String computerName = null;
+	private String searchName = null;
 	
 	
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		
 		if (request.getParameter("search") != "") {
-			computerName = request.getParameter("search");
-			request.setAttribute(ATT_SEARCH,  computerName);
+			searchName = request.getParameter("search");
+			request.setAttribute(ATT_SEARCH,  searchName);
 		} else {
 			// reset when you click on the header
-			computerName = null;
+			searchName = null;
 		}
 				
 		int nbComputerPerPage = 10;
@@ -49,12 +49,12 @@ public class Dashboard extends HttpServlet {
 
 		int nbComputers = 0;
 		Page p = null;
-		if (computerName == null) {
+		if (searchName == null) {
 			p = ComputerServiceImpl.INSTANCE.getPage(pageNumber - 1, nbComputerPerPage);
 			nbComputers = ComputerServiceImpl.INSTANCE.getNbComputers();
 		}
 		else {
-			p = ComputerServiceImpl.INSTANCE.getByName(computerName, pageNumber - 1, nbComputerPerPage);
+			p = ComputerServiceImpl.INSTANCE.getByName(searchName, pageNumber - 1, nbComputerPerPage);
 			nbComputers = p.getNbComputers();
 		}
 		

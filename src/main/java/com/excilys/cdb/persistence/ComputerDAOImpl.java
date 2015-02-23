@@ -159,7 +159,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	}
 
 	/**
-	 * Gets Computers by their name
+	 * Gets Computers by their name or the name of their company
 	 * 
 	 * @param name
 	 * @return a Page with all computers containing the name
@@ -172,10 +172,13 @@ public enum ComputerDAOImpl implements ComputerDAO {
 		ResultSet r = null;
 		int nb;
 		try {
-			pstm = conn.prepareStatement("SELECT * FROM computer WHERE name LIKE ? ORDER BY id LIMIT ?, ?");
+			pstm = conn.prepareStatement("SELECT * FROM computer LEFT JOIN company ON computer.company_id = company.id"
+					+ " WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY computer.id LIMIT ?, ?");
+
 			pstm.setString(1, name);
-			pstm.setInt(2, idx * size);
-			pstm.setInt(3, size);
+			pstm.setString(2, name);
+			pstm.setInt(3, idx * size);
+			pstm.setInt(4, size);
 			r = pstm.executeQuery();
 			if (!r.next()) {
 				nb = 0;
@@ -185,8 +188,10 @@ public enum ComputerDAOImpl implements ComputerDAO {
 				// mapping the ResultSet into a list of computers
 				lc = ComputerMapper.INSTANCE.toList(r);
 				
-				pstm2 = conn.prepareStatement("SELECT COUNT(*) FROM computer WHERE name LIKE ?");
+				pstm2 = conn.prepareStatement("SELECT COUNT(*) FROM computer LEFT JOIN company ON computer.company_id = company.id"
+						+ " WHERE computer.name LIKE ? OR company.name LIKE ?");
 				pstm2.setString(1, name);
+				pstm2.setString(2, name);
 				r = pstm2.executeQuery();
 				r.next();
 				nb = r.getInt(1);

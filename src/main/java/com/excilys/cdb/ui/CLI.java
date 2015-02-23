@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.Page;
 //import com.excilys.cdb.model.Page;
 import com.excilys.cdb.service.CompanyServiceImpl;
 import com.excilys.cdb.service.ComputerServiceImpl;
@@ -82,7 +83,8 @@ public class CLI {
 				if (answer.toUpperCase().matches("Y")) {
 					// displays result in a page
 					//Page p = new Page(100,  ComputerServiceImpl.INSTANCE.getNbComputers()); // 100 computers per page
-					//p.menuPage(sc);			
+					Page p = ComputerServiceImpl.INSTANCE.getPage(0, 100);
+					p.menuPage(sc);			
 				}
 				else {
 					listComputers();

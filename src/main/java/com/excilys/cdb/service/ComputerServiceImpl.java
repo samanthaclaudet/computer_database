@@ -48,7 +48,7 @@ public enum ComputerServiceImpl implements ComputerService {
 	}
 
 	/**
-	 * Gets Computers by their name
+	 * Gets Computers by their name or the name of their company
 	 * 
 	 * @param name
 	 * @return a Page with all computers containing the name
