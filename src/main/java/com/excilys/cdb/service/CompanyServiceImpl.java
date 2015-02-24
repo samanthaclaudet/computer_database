@@ -13,6 +13,8 @@ import com.excilys.cdb.persistence.ComputerDAOImpl;
 import com.excilys.cdb.persistence.ConnectionDB;
 import com.excilys.cdb.service.interfaces.CompanyService;
 
+import exceptions.SQLRuntimeException;
+
 /**
  * @see CompanyDAOImpl
  * 
@@ -61,7 +63,7 @@ public enum CompanyServiceImpl implements CompanyService {
 			ComputerDAOImpl.INSTANCE.delete(id, conn);
 			CompanyDAOImpl.INSTANCE.delete(id, conn);
 			conn.commit();
-		} catch (SQLException e) {
+		} catch (SQLRuntimeException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 

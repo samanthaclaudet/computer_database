@@ -51,7 +51,7 @@ public enum ConnectionDB {
 	}
 
 	/**
-	 * Gives a connection url, user and password are defined as constants
+	 * Gets a connection
 	 * 
 	 * @return a connection
 	 */

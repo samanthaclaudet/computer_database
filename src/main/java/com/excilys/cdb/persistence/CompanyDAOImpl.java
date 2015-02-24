@@ -13,6 +13,8 @@ import com.excilys.cdb.model.Company;
 import com.excilys.cdb.persistence.interfaces.CompanyDAO;
 import com.excilys.cdb.ui.Util;
 
+import exceptions.SQLRuntimeException;
+
 /**
  * CompanyDAO makes the connection between the database and the Company object
  * This is a singleton The available methods are :
@@ -97,42 +99,45 @@ public enum CompanyDAOImpl implements CompanyDAO {
 	 * @param conn
 	 * 			  the connection used
 	 */
-	public void delete(int id, Connection conn) {
+	public void delete(int id, Connection conn) throws SQLRuntimeException{
 		PreparedStatement pstm = null;
 		try {
 			pstm = conn.prepareStatement("DELETE FROM company WHERE id=" + id);
 			System.out.println(pstm.toString());
 			int queryExecuted = pstm.executeUpdate();
 			// displays "success" or "failure"
-			if (!Util.checkSuccess(queryExecuted) && conn != null) {
-				System.out.print("Transaction is being rolled back");
-				conn.rollback();
+//			if (!Util.checkSuccess(queryExecuted) && conn != null) {
+//				System.out.print("Transaction is being rolled back");
+//				conn.rollback();
+//			}
+			if (!Util.checkSuccess(queryExecuted)) {
+				throw new SQLRuntimeException();
 			}
 		} catch (SQLException e) {
 			logger.error(e.getMessage());
-			e.printStackTrace();
-
-			if (conn != null) {
-	            try {
-	                System.err.print("Transaction is being rolled back");
-	                conn.rollback();
-	            } catch(SQLException ex) {
-	            	logger.error(ex.getMessage());
-	            	ex.printStackTrace();
-	            	throw new RuntimeException();
-	    		} finally {
-	    			if (pstm != null) {
-	    				try {
-	    					pstm.close();
-	    				} catch (SQLException exc) {
-	    					logger.error(exc.getMessage());
-	    					exc.printStackTrace();
-	    					throw new RuntimeException();
-	    				}
-	    			}
-	    		}
-	        }
-			throw new RuntimeException();
+//			e.printStackTrace();
+//
+//			if (conn != null) {
+//	            try {
+//	                System.err.print("Transaction is being rolled back");
+//	                conn.rollback();
+//	            } catch(SQLException ex) {
+//	            	logger.error(ex.getMessage());
+//	            	ex.printStackTrace();
+//	            	throw new RuntimeException();
+//	    		} finally {
+//	    			if (pstm != null) {
+//	    				try {
+//	    					pstm.close();
+//	    				} catch (SQLException exc) {
+//	    					logger.error(exc.getMessage());
+//	    					exc.printStackTrace();
+//	    					throw new RuntimeException();
+//	    				}
+//	    			}
+//	    		}
+//	        }
+			throw new SQLRuntimeException();
 		} 
 	}
 
