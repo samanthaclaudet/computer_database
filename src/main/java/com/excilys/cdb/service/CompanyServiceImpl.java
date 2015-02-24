@@ -1,7 +1,6 @@
 package com.excilys.cdb.service;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -51,35 +50,23 @@ public enum CompanyServiceImpl implements CompanyService {
 
 	/**
 	 * Deletes a company from the database at the id passed in parameter and all
-	 * the related computers
+	 * the related computers in a transaction
 	 * 
 	 * @param id
 	 *            the id of the company you want to delete
 	 */
 	public void delete(int id) {
-		Connection conn = ConnectionDB.getConnection();		
+		Connection conn = ConnectionDB.getConnection(false); // set AutoCommit to false	
 		try {
-			conn.setAutoCommit(false);
-			ComputerDAOImpl.INSTANCE.delete(id, conn);
-			CompanyDAOImpl.INSTANCE.delete(id, conn);
-			conn.commit();
+			ComputerDAOImpl.INSTANCE.delete(id, conn); // deletes all the computer with that company first
+			CompanyDAOImpl.INSTANCE.delete(id, conn); // deletes the comnpany
 		} catch (SQLRuntimeException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
-
-			if (conn != null) {
-				try {
-					System.err.print("Transaction is being rolled back");
-			        conn.rollback();
-				} catch(SQLException excep) {
-			      	logger.error(e.getMessage());
-			       	e.printStackTrace();
-			       	throw new RuntimeException();
-			    }
-			}
+			ConnectionDB.cancelTransaction(conn); // rollback
 			throw new RuntimeException();
 		} finally {
-			ConnectionDB.closeConnection(conn, null, null);
+			ConnectionDB.closeConnection(conn, true); // commit then close the connection
 		}
 	}
 	

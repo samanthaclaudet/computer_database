@@ -9,6 +9,12 @@ import org.slf4j.LoggerFactory;
 
 import com.excilys.cdb.servlets.Dashboard;
 
+/**
+ * Reload a new database for tests
+ * 
+ * @author sclaudet
+ *
+ */
 public enum DatabaseLoader {
 	INSTANCE;
 	

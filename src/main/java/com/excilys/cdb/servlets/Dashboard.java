@@ -10,9 +10,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
-
+/**
+ * Displays all the computer with pagination
+ * It is possible to search by computer name or company name
+ * 
+ * @author sclaudet
+ *
+ */
 @WebServlet("/dashboard")
 public class Dashboard extends HttpServlet {
 
@@ -22,7 +26,6 @@ public class Dashboard extends HttpServlet {
 	public static final String ATT_PAGE = "page";
 	public static final String ATT_SEARCH = "search";
 	public static final String VUE = "/static/views/dashboard.jsp";
-	//private static final Logger logger = LoggerFactory.getLogger(Dashboard.class);
 	private String searchName = null;
 	
 	
@@ -50,10 +53,12 @@ public class Dashboard extends HttpServlet {
 		int nbComputers = 0;
 		Page p = null;
 		if (searchName == null) {
+			// all results
 			p = ComputerServiceImpl.INSTANCE.getPage(pageNumber - 1, nbComputerPerPage);
 			nbComputers = ComputerServiceImpl.INSTANCE.getNbComputers();
 		}
 		else {
+			// search by name
 			p = ComputerServiceImpl.INSTANCE.getByName(searchName, pageNumber - 1, nbComputerPerPage);
 			nbComputers = p.getNbComputers();
 		}

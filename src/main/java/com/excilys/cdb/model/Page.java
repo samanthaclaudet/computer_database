@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.excilys.cdb.dto.ComputerDTO;
-import com.excilys.cdb.dto.DTOMapper;
 import com.excilys.cdb.service.ComputerServiceImpl;
 
 /**
@@ -23,16 +22,22 @@ public class Page {
 
 	private int nbComputers; // total number of computers
 	private int nbComputerPerPage; // set at instantiation, can't be changed
-									// after
 	private int nbPages; // total number of pages
 	private List<ComputerDTO> computers;
 	private int idx; // the number of the page we are currently on
-	//private boolean hasNext, hasPrevious;
 	private int[] range;
 
 	public Page() {
 	}
 
+	/**
+	 * Constructor for the first page
+	 * 
+	 * @param nbPerPage
+	 *            number of computers per page
+	 * @param nbComputers
+	 *            total number of computers
+	 */
 	public Page(int nbPerPage, int nbComputers) {
 		this.idx = 0;
 		this.nbComputers = nbComputers;
@@ -40,12 +45,20 @@ public class Page {
 		this.nbPages = (int) Math.ceil((double) nbComputers
 				/ (double) nbPerPage);
 		this.computers = new ArrayList<ComputerDTO>();
-		//this.hasNext = true;
-		//this.hasPrevious = false;
 		this.range = new int[] { Math.max(0, idx - 5),
 				Math.min(nbPages, idx + 5) };
 	}
 
+	/**
+	 * Constructor for a page at a specific index
+	 * 
+	 * @param nbPerPage
+	 *            number of computers per page
+	 * @param nbComputers
+	 *            total number of computers
+	 * @param idx
+	 *            number of the page
+	 */
 	public Page(int nbPerPage, int nbComputers, int idx) {
 		this(nbPerPage, nbComputers);
 		this.idx = idx;
@@ -53,38 +66,66 @@ public class Page {
 				Math.min(nbPages, idx + 5) };
 	}
 
+	/**
+	 * 
+	 * @return range
+	 */
 	public int[] getRange() {
 		return this.range;
 	}
 
+	/**
+	 * 
+	 * @return index
+	 */
 	public int getIdx() {
 		return this.idx;
 	}
 
+	/**
+	 * 
+	 * @param idx
+	 */
 	public void setIdx(int idx) {
 		this.idx = idx;
 	}
 
+	/**
+	 * 
+	 * @return number of computers
+	 */
 	public int getNbComputers() {
 		return this.nbComputers;
 	}
-	
+
+	/**
+	 * 
+	 * @return list of computerDTOs
+	 */
 	public List<ComputerDTO> getComputers() {
 		return computers;
 	}
 
-	public void setComputers(List<Computer> comp) {
-		List<ComputerDTO> computersDTO = new ArrayList<ComputerDTO>();
-		for (Computer c : comp) {
-			computersDTO.add(DTOMapper.computerToDTO(c));
-		}
+	/**
+	 * 
+	 * @param computersDTO
+	 */
+	public void setComputers(List<ComputerDTO> computersDTO) {
 		this.computers = computersDTO;
 	}
 
+	/**
+	 * 
+	 * @return number of computers per page
+	 */
 	public int getNbComputerPerPage() {
 		return this.nbComputerPerPage;
 	}
 
+	/**
+	 * 
+	 * @return total number of pages
+	 */
 	public int getNbPages() {
 		return this.nbPages;
 	}
@@ -107,70 +148,6 @@ public class Page {
 	}
 
 	/**
-	 * Goes to the next page if there is one and displays it Otherwise prints
-	 * "Last page"
-	 */
-//	public void nextPage() {
-//		if (hasNext) {
-//			idx++;
-//			if (idx == nbPages - 1) {
-//				hasNext = false;
-//			} else {
-//				hasPrevious = true;
-//			}
-//			setComputers(ComputerServiceImpl.INSTANCE.getPerPage(idx,
-//					nbComputerPerPage));
-//			System.out.println(this.toString());
-//		} else {
-//			System.out.println("Last page !");
-//		}
-//	}
-//
-//	/**
-//	 * Goes to the previous page if there is one and displays it Otherwise
-//	 * prints "First page"
-//	 */
-//	public void previousPage() {
-//		if (hasPrevious) {
-//			idx--;
-//			if (idx == 0) {
-//				hasPrevious = false;
-//			} else {
-//				hasNext = true;
-//			}
-//			setComputers(ComputerServiceImpl.INSTANCE.getPerPage(idx,
-//					nbComputerPerPage));
-//			System.out.println(this.toString());
-//		} else {
-//			System.out.println("First page !");
-//		}
-//	}
-//
-//	/**
-//	 * Goes to the firstPage and displays it
-//	 */
-//	public void firstPage() {
-//		idx = 0;
-//		hasNext = true;
-//		hasPrevious = false;
-//		setComputers(ComputerServiceImpl.INSTANCE
-//				.getPerPage(idx, nbComputerPerPage));
-//		System.out.println(this.toString());
-//	}
-//
-//	/**
-//	 * Goes to the last page and displays it
-//	 */
-//	public void lastPage() {
-//		idx = nbPages - 1;
-//		hasNext = false;
-//		hasPrevious = true;
-//		setComputers(ComputerServiceImpl.INSTANCE
-//				.getPerPage(idx, nbComputerPerPage));
-//		System.out.println(this.toString());
-//	}
-
-	/**
 	 * Displays the menu for the page :
 	 * <ul>
 	 * <li>go to the first page</li>
@@ -184,7 +161,6 @@ public class Page {
 	 */
 	public void menuPage(Scanner sc) {
 
-		//setComputers(ComputerServiceImpl.INSTANCE.getPerPage(idx, nbComputerPerPage));
 		System.out.println(this.toString());
 		boolean end = false;
 		do {
@@ -195,30 +171,27 @@ public class Page {
 			System.out.println("Exit : E");
 			String answer = sc.nextLine();
 			if (answer.toUpperCase().matches("P")) {
-				//this.previousPage();
 				if (this.idx > 0) {
 					this.idx--;
 				}
 			}
 			if (answer.toUpperCase().matches("N")) {
-				//this.nextPage();
 				if (this.idx < nbPages) {
 					this.idx++;
 				}
 			}
 			if (answer.toUpperCase().matches("F")) {
-				//this.firstPage();
 				this.idx = 0;
 			}
 			if (answer.toUpperCase().matches("L")) {
-				//this.lastPage();
 				this.idx = this.nbPages - 1;
 			}
 			if (answer.toUpperCase().matches("E")) {
 				end = true;
 			}
-			
-			this.computers = ComputerServiceImpl.INSTANCE.getPage(this.idx, 100).getComputers();
+
+			this.computers = ComputerServiceImpl.INSTANCE
+					.getPage(this.idx, 100).getComputers();
 			System.out.println(this.toString());
 		} while (!end);
 	}

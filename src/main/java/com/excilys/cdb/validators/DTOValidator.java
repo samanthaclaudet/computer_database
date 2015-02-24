@@ -8,16 +8,14 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import com.excilys.cdb.dto.ComputerDTO;
+public class DTOValidator{
 
-public class ComputerDTOValidator{
-
-	public static List<String> validate(ComputerDTO computerDTO) {
+	public static <T> List<String> validate(T objectDTO) {
 		Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-		Set<ConstraintViolation<ComputerDTO>> violations = validator.validate(computerDTO);
+		Set<ConstraintViolation<T>> violations = validator.validate(objectDTO);
 		List<String> errors = new ArrayList<>();
 		if (!violations.isEmpty()) {
-			for (ConstraintViolation<ComputerDTO> constraintViolation : violations) {
+			for (ConstraintViolation<T> constraintViolation : violations) {
 				errors.add("Value '" + constraintViolation.getInvalidValue() + "' is invalid for the field '"
 						+ constraintViolation.getPropertyPath() + "' : " + constraintViolation.getMessage());
 			}

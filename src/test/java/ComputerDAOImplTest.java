@@ -89,11 +89,11 @@ public class ComputerDAOImplTest {
 	/**
 	 * Test getNbComputers
 	 */
-//	@Test
-//	public void testGetNbComputers() {
-//		int nb = ComputerDAOImpl.INSTANCE.getNbComputers();
-//		assertEquals(574, nb);
-//	}
+	@Test
+	public void testGetNbComputers() {
+		int nb = ComputerDAOImpl.INSTANCE.getNbComputers();
+		assertEquals(574, nb);
+	}
 
 	/**
 	 * Test getPage

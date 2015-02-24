@@ -8,6 +8,20 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Gets the connections properties :
+ * <ul>
+ * <li>user</li>
+ * <li>url</li>
+ * <li>password</li>
+ * <li>minimum number of connections per partition</li>
+ * <li>maximum number of connections per partition</li>
+ * <li>number of partitions</li>
+ * </ul>
+ * 
+ * @author sclaudet
+ *
+ */
 public enum DatabaseProperties {
 	INSTANCE;
 
@@ -16,6 +30,11 @@ public enum DatabaseProperties {
 
 	private Properties prop;
 
+	/**
+	 * Gets the connections properties from db.properties
+	 * 
+	 * @return properties
+	 */
 	public Properties getProperties() {
 		if (prop == null) {
 			prop = new Properties();
@@ -39,33 +58,57 @@ public enum DatabaseProperties {
 		return prop;
 	}
 
+	/**
+	 * 
+	 * @return the user name of the connection
+	 */
 	public String getDatabaseUser() {
 		Properties prop = getProperties();
 		return prop.getProperty("DB_USER");
 	}
 
+	/**
+	 * 
+	 * @return the url of the connection
+	 */
 	public String getDatabaseUrl() {
 		Properties prop = getProperties();
 		return prop.getProperty("DB_URL");
 	}
 	
+	/**
+	 * 
+	 * @return the password of the connection
+	 */
 	public String getDatabasePassword() {
 		Properties prop = getProperties();
 		return prop.getProperty("DB_PASSWD");
 	}
 	
+	/**
+	 * 
+	 * @return the minimum number of connections per partition
+	 */
 	public int getBoneCPMin() {
 		Properties prop = getProperties();
 		String s = prop.getProperty("MIN_CONNECTIONS_PER_PARTITION");
 		return Integer.parseInt(s);
 	}
 	
+	/**
+	 * 
+	 * @return the maximum number of connections per partition
+	 */
 	public int getBoneCPMax() {
 		Properties prop = getProperties();
 		String s = prop.getProperty("MAX_CONNECTIONS_PER_PARTITION");
 		return Integer.parseInt(s);
 	}
 
+	/**
+	 * 
+	 * @return the number of partitions of the connection per partition
+	 */
 	public int getBoneCPPartitions() {
 		Properties prop = getProperties();
 		String s = prop.getProperty("NB_PARTITIONS");

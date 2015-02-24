@@ -6,7 +6,7 @@ import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.CompanyServiceImpl;
 import com.excilys.cdb.service.ComputerServiceImpl;
-import com.excilys.cdb.validators.ComputerDTOValidator;
+import com.excilys.cdb.validators.DTOValidator;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,6 +17,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Servlet adding a computer to the database
+ * 
+ * @author sclaudet
+ *
+ */
 @WebServlet("/add-computer")
 public class AddComputer extends HttpServlet {
 
@@ -24,6 +30,9 @@ public class AddComputer extends HttpServlet {
 	public static final String ATT_COMPANIES = "companies";
 	public static final String VUE = "/static/views/addComputer.jsp";
 
+	/**
+	 * Displays all the companies in the drop-down menu
+	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		List<Company> companies = CompanyServiceImpl.INSTANCE.getAll();
@@ -32,6 +41,9 @@ public class AddComputer extends HttpServlet {
 				.forward(request, response);
 	}
 
+	/**
+	 * Adds a computer to the database
+	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String name = request.getParameter("computerName");
@@ -43,7 +55,7 @@ public class AddComputer extends HttpServlet {
 				company);
 		
 		// validates the DTO
-		List<String> errors = ComputerDTOValidator.validate(cDTO);
+		List<String> errors = DTOValidator.validate(cDTO);
 		if (!errors.isEmpty()) {
 			request.setAttribute("errors", errors);
 			doGet(request, response);

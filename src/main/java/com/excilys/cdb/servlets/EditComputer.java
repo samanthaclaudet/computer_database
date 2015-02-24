@@ -6,7 +6,7 @@ import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.service.CompanyServiceImpl;
 import com.excilys.cdb.service.ComputerServiceImpl;
-import com.excilys.cdb.validators.ComputerDTOValidator;
+import com.excilys.cdb.validators.DTOValidator;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,6 +17,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Updates a computer in the database
+ * 
+ * @author sclaudet
+ *
+ */
 @WebServlet("/edit-computer")
 public class EditComputer extends HttpServlet {
 
@@ -27,6 +33,11 @@ public class EditComputer extends HttpServlet {
 	public static final String VUE = "/static/views/editComputer.jsp";
 	public int computerId;
 
+	/**
+	 * Displays all the companies in the drop-down menu
+	 * Gets the computer to update id's
+	 * Puts the computer's data as default values
+	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		List<Company> companies = CompanyServiceImpl.INSTANCE.getAll();
@@ -42,6 +53,9 @@ public class EditComputer extends HttpServlet {
 				.forward(request, response);
 	}
 
+	/**
+	 * Updates a computer
+	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -54,7 +68,7 @@ public class EditComputer extends HttpServlet {
 				discontinued, company);
 		
 		// validates the DTO
-		List<String> errors = ComputerDTOValidator.validate(cDTO);
+		List<String> errors = DTOValidator.validate(cDTO);
 		if (!errors.isEmpty()) {
 			request.setAttribute("errors", errors);
 			doGet(request, response);

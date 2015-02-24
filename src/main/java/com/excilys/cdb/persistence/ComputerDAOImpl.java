@@ -11,6 +11,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.dto.DTOMapper;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.Page;
 import com.excilys.cdb.persistence.interfaces.ComputerDAO;
@@ -24,11 +25,13 @@ import exceptions.SQLRuntimeException;
  * <ul>
  * <li>getAll()</li>
  * <li>getById(int id)</li>
+ * <li>getByName(String name, int idx, int size)</li>
  * <li>getNbComputers()</li>
  * <li>getPage(int idx, int size)</li>
  * <li>set(Computer c)</li>
  * <li>update(int id, Computer c)</li>
  * <li>delete(int id)</li>
+ * <li>delete(int id, Connection conn)</li>
  * </ul>
  * 
  * @see Computer
@@ -52,7 +55,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	 */
 	public int getNbComputers() {
 		int nb = 0;
-		Connection conn = ConnectionDB.getConnection();
+		Connection conn = ConnectionDB.getConnection(true);
 		PreparedStatement pstm = null;
 		ResultSet r = null;
 		try {
@@ -66,7 +69,9 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
-			ConnectionDB.closeConnection(conn, pstm, r);
+			ConnectionDB.closeResultSet(r);
+			ConnectionDB.closePreparedStatement(pstm);
+			ConnectionDB.closeConnection(conn, false);
 		}
 		return nb;
 	}
@@ -82,7 +87,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	 */
 	public Page getPage(int idx, int size) {
 		List<Computer> lc = null;
-		Connection conn = ConnectionDB.getConnection();;
+		Connection conn = ConnectionDB.getConnection(true);;
 		PreparedStatement pstm = null;
 		ResultSet r = null;
 		try {
@@ -97,11 +102,13 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
-			ConnectionDB.closeConnection(conn, pstm, r);
+			ConnectionDB.closeResultSet(r);
+			ConnectionDB.closePreparedStatement(pstm);
+			ConnectionDB.closeConnection(conn, false);
 		}
 		
 		Page p = new Page(size, getNbComputers(), idx);
-		p.setComputers(lc);
+		p.setComputers(DTOMapper.listToDto(lc));
 		
 		return p;
 	}
@@ -113,7 +120,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	 */
 	public List<Computer> getAll() {
 		List<Computer> lc = null;
-		Connection conn = ConnectionDB.getConnection();
+		Connection conn = ConnectionDB.getConnection(true);
 		PreparedStatement pstm = null;
 		ResultSet r = null;
 		try {
@@ -126,7 +133,9 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
-			ConnectionDB.closeConnection(conn, pstm, r);
+			ConnectionDB.closeResultSet(r);
+			ConnectionDB.closePreparedStatement(pstm);
+			ConnectionDB.closeConnection(conn, false);
 		}
 		return lc;
 	}
@@ -139,7 +148,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	 */
 	public Computer getById(int id) {
 		Computer c = null;
-		Connection conn = ConnectionDB.getConnection();
+		Connection conn = ConnectionDB.getConnection(true);
 		PreparedStatement pstm = null;
 		ResultSet r = null;
 		try {
@@ -155,7 +164,9 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
-			ConnectionDB.closeConnection(conn, pstm, r);
+			ConnectionDB.closeResultSet(r);
+			ConnectionDB.closePreparedStatement(pstm);
+			ConnectionDB.closeConnection(conn, false);
 		}
 		return c;
 	}
@@ -169,7 +180,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	public Page getByName(String name, int idx, int size) {
 		name = "%" + name + "%";
 		List<Computer> lc = null;
-		Connection conn = ConnectionDB.getConnection();
+		Connection conn = ConnectionDB.getConnection(true);
 		PreparedStatement pstm = null, pstm2 = null;
 		ResultSet r = null;
 		int nb;
@@ -203,19 +214,13 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
-			try {
-				if (pstm2 != null) {
-					pstm2.close();
-				}
-			} catch (SQLException e) {
-				logger.error(e.getMessage());
-				e.printStackTrace();
-				throw new RuntimeException();
-			}
-			ConnectionDB.closeConnection(conn, pstm, r);
+			ConnectionDB.closeResultSet(r);
+			ConnectionDB.closePreparedStatement(pstm);
+			ConnectionDB.closePreparedStatement(pstm2);
+			ConnectionDB.closeConnection(conn, false);
 		}
 		Page p = new Page(size, nb, idx);
-		p.setComputers(lc);
+		p.setComputers(DTOMapper.listToDto(lc));
 		return p;
 	}
 	
@@ -226,7 +231,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	 *            the computer you want to add in the database
 	 */
 	public void set(Computer c) {
-		Connection conn = ConnectionDB.getConnection();
+		Connection conn = ConnectionDB.getConnection(true);
 		PreparedStatement pstm = null;
 		try {
 			pstm = conn
@@ -262,7 +267,8 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
-			ConnectionDB.closeConnection(conn, pstm, null);
+			ConnectionDB.closePreparedStatement(pstm);
+			ConnectionDB.closeConnection(conn, false);
 		}
 	}
 
@@ -276,7 +282,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	 *            the new computer that will replace the one in the database
 	 */
 	public void update(int id, Computer c) {
-		Connection conn = ConnectionDB.getConnection();
+		Connection conn = ConnectionDB.getConnection(true);
 		PreparedStatement pstm = null;
 		try {
 			pstm = conn
@@ -313,7 +319,8 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
-			ConnectionDB.closeConnection(conn, pstm, null);
+			ConnectionDB.closePreparedStatement(pstm);
+			ConnectionDB.closeConnection(conn, false);
 		}
 	}
 
@@ -324,7 +331,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	 *            the id of the computer you want to delete
 	 */
 	public void delete(int id) {
-		Connection conn = ConnectionDB.getConnection();
+		Connection conn = ConnectionDB.getConnection(true);
 		PreparedStatement pstm = null;
 		try {
 			pstm = conn.prepareStatement("DELETE FROM computer WHERE id=" + id);
@@ -336,7 +343,8 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
-			ConnectionDB.closeConnection(conn, pstm, null);
+		ConnectionDB.closePreparedStatement(pstm);
+		ConnectionDB.closeConnection(conn, false);
 		}
 	}
 
@@ -353,39 +361,13 @@ public enum ComputerDAOImpl implements ComputerDAO {
 		try {
 			pstm = conn.prepareStatement("DELETE FROM computer WHERE company_id=" + id);
 			int queryExecuted = pstm.executeUpdate();
-			// displays "success" or "failure"
-//			if (!Util.checkSuccess(queryExecuted) && conn != null) {
-//				System.out.print("Transaction is being rolled back");
-//				conn.rollback();
-//			}
 			if (!Util.checkSuccess(queryExecuted)) {
 				throw new SQLRuntimeException();
 			}
 		} catch (SQLException e) {
-//			logger.error(e.getMessage());
-//			e.printStackTrace();
-//
-//			if (conn != null) {
-//	            try {
-//	                System.err.print("Transaction is being rolled back");
-//	                conn.rollback();
-//	            } catch(SQLException excep) {
-//	            	logger.error(e.getMessage());
-//	            	e.printStackTrace();
-//	            	throw new RuntimeException();
-//	            }
-//	        }
 			throw new SQLRuntimeException();
 		} finally {
-			if (pstm != null) {
-				try {
-					pstm.close();
-				} catch (SQLException e) {
-					logger.error(e.getMessage());
-					e.printStackTrace();
-					throw new RuntimeException();
-				}
-			}
+			ConnectionDB.closePreparedStatement(pstm);
 		}
 	}
 	

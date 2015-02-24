@@ -20,6 +20,7 @@ import com.excilys.cdb.service.ComputerServiceImpl;
  * <li>Add a new computer to the database</li>
  * <li>Update a computer in the database</li>
  * <li>Delete a computer from the database</li>
+ * <li>Delete a company from the database</li>
  * </ul>
  * 
  * @author sclaudet
@@ -82,8 +83,7 @@ public class CLI {
 				String answer = sc.nextLine();
 				if (answer.toUpperCase().matches("Y")) {
 					// displays result in a page
-					//Page p = new Page(100,  ComputerServiceImpl.INSTANCE.getNbComputers()); // 100 computers per page
-					Page p = ComputerServiceImpl.INSTANCE.getPage(0, 100);
+					Page p = ComputerServiceImpl.INSTANCE.getPage(0, 100); // 100 computers per page
 					p.menuPage(sc);			
 				}
 				else {

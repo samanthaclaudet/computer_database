@@ -30,9 +30,9 @@ public class SeleniumTest {
 
 		WebElement resultTab = driver.findElement(By.id("results"));
 		List<WebElement> results = resultTab.findElements(By.tagName("tr"));
+		Assert.assertEquals(10, results.size());
 		//WebElement searchbox = driver.findElement(By.id("searchbox"));
 		//WebElement searchsubmit = driver.findElement(By.id("searchsubmit"));
-		Assert.assertEquals(10, results.size());
 		// searchbox.clear();
 		// searchbox.sendKeys("test");
 		// searchsubmit.click();

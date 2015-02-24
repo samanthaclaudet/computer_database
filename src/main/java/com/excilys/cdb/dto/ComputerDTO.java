@@ -2,6 +2,13 @@ package com.excilys.cdb.dto;
 
 import com.excilys.cdb.model.Company;
 
+/**
+ * Same as Computer, dates are passed as String
+ * 
+ * @author sclaudet
+ *
+ * @see Computer
+ */
 public class ComputerDTO {
     private int id;
     private String name;

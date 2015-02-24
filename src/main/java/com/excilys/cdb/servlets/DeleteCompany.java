@@ -12,6 +12,12 @@ import javax.servlet.http.HttpServletResponse;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.service.CompanyServiceImpl;
 
+/**
+ * Deletes a company and all the related computers
+ * 
+ * @author sclaudet
+ *
+ */
 @WebServlet("/delete-company")
 public class DeleteCompany extends HttpServlet {
 
@@ -19,6 +25,9 @@ public class DeleteCompany extends HttpServlet {
 	public static final String ATT_COMPANIES = "companies";
 	public static final String VUE = "/static/views/deleteCompany.jsp";
 
+	/**
+	 * Displays all the companies in the drop-down menu
+	 */
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		List<Company> companies = CompanyServiceImpl.INSTANCE.getAll();
@@ -27,6 +36,9 @@ public class DeleteCompany extends HttpServlet {
 				.forward(request, response);
 	}
 	
+	/**
+	 * Removes a company from the database
+	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		int companyId = Integer.parseInt(request.getParameter("companyId"));

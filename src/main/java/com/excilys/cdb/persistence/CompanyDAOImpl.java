@@ -21,6 +21,7 @@ import exceptions.SQLRuntimeException;
  * <ul>
  * <li>getAll()</li>
  * <li>getById(int id)</li>
+ * <li>delete(int id, Connection conn)</li>
  * </ul>
  * 
  * @see Company
@@ -44,7 +45,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
 	 */
 	public List<Company> getAll() {
 		List<Company> lc = null;
-		Connection conn = ConnectionDB.getConnection();
+		Connection conn = ConnectionDB.getConnection(true);
 		PreparedStatement pstm = null;
 		ResultSet r = null;
 		try {
@@ -57,7 +58,9 @@ public enum CompanyDAOImpl implements CompanyDAO {
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
-			ConnectionDB.closeConnection(conn, pstm, r);
+			ConnectionDB.closeResultSet(r);
+			ConnectionDB.closePreparedStatement(pstm);
+			ConnectionDB.closeConnection(conn, false);
 		}
 		return lc;
 	}
@@ -70,7 +73,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
 	 */
 	public Company getById(int id) {
 		Company c = null;
-		Connection conn = ConnectionDB.getConnection();
+		Connection conn = ConnectionDB.getConnection(true);
 		PreparedStatement pstm = null;
 		ResultSet r = null;
 		try {
@@ -86,7 +89,9 @@ public enum CompanyDAOImpl implements CompanyDAO {
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
-			ConnectionDB.closeConnection(conn, pstm, r);
+			ConnectionDB.closeResultSet(r);
+			ConnectionDB.closePreparedStatement(pstm);
+			ConnectionDB.closeConnection(conn, false);
 		}
 		return c;
 	}
@@ -105,40 +110,16 @@ public enum CompanyDAOImpl implements CompanyDAO {
 			pstm = conn.prepareStatement("DELETE FROM company WHERE id=" + id);
 			System.out.println(pstm.toString());
 			int queryExecuted = pstm.executeUpdate();
-			// displays "success" or "failure"
-//			if (!Util.checkSuccess(queryExecuted) && conn != null) {
-//				System.out.print("Transaction is being rolled back");
-//				conn.rollback();
-//			}
 			if (!Util.checkSuccess(queryExecuted)) {
 				throw new SQLRuntimeException();
 			}
 		} catch (SQLException e) {
 			logger.error(e.getMessage());
-//			e.printStackTrace();
-//
-//			if (conn != null) {
-//	            try {
-//	                System.err.print("Transaction is being rolled back");
-//	                conn.rollback();
-//	            } catch(SQLException ex) {
-//	            	logger.error(ex.getMessage());
-//	            	ex.printStackTrace();
-//	            	throw new RuntimeException();
-//	    		} finally {
-//	    			if (pstm != null) {
-//	    				try {
-//	    					pstm.close();
-//	    				} catch (SQLException exc) {
-//	    					logger.error(exc.getMessage());
-//	    					exc.printStackTrace();
-//	    					throw new RuntimeException();
-//	    				}
-//	    			}
-//	    		}
-//	        }
+			e.printStackTrace();
 			throw new SQLRuntimeException();
-		} 
+		} finally {
+			ConnectionDB.closePreparedStatement(pstm);
+		}
 	}
 
 }

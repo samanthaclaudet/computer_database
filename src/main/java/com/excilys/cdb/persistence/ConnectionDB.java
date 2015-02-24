@@ -41,8 +41,8 @@ public enum ConnectionDB {
 			config.setMaxConnectionsPerPartition(DatabaseProperties.INSTANCE.getBoneCPMax());
 			config.setPartitionCount(DatabaseProperties.INSTANCE.getBoneCPPartitions());
 	
+			// we use a pool of connections
 			connectionPool = new BoneCP(config);
-			
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
@@ -55,10 +55,11 @@ public enum ConnectionDB {
 	 * 
 	 * @return a connection
 	 */
-	public static Connection getConnection() {
+	public static Connection getConnection(boolean isAutoCommit) {
 		Connection conn = null;
 		try {
 			conn = connectionPool.getConnection();
+			conn.setAutoCommit(isAutoCommit);
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
@@ -68,25 +69,36 @@ public enum ConnectionDB {
 	}
 
 	/**
-	 * Closes all elements used for the query
+	 * Rollsback a connection when a transaction failed
 	 * 
 	 * @param conn
-	 *            the connection you want to close
-	 * @param pstm
-	 *            the preparedStatement you want to close
-	 * @param rs
-	 *            the resultset you want to close
 	 */
-	public static void closeConnection(Connection conn, PreparedStatement pstm,
-			ResultSet rs) {
+	public static void cancelTransaction(Connection conn) {
 		try {
-			if (rs != null) {
-				rs.close();
-			}
-			if (pstm != null) {
-				pstm.close();
-			}
 			if (conn != null) {
+				System.err.print("Transaction is being rolled back");
+		        conn.rollback();
+			}
+		} catch(SQLException e) {
+		      	logger.error(e.getMessage());
+		       	e.printStackTrace();
+		       	throw new RuntimeException();
+		}
+	}
+	
+	/**
+	 * Closes a Connection (sends it back to the pool)
+	 * Commits it first if it's a transaction
+	 * 
+	 * @param conn
+	 *            the Connection you want to close
+	 */
+	public static void closeConnection(Connection conn, boolean isTransaction) {
+		try {
+			if (conn != null) {
+				if (isTransaction) {
+					conn.commit();
+				}
 				conn.close();
 			}
 		} catch (SQLException e) {
@@ -96,4 +108,40 @@ public enum ConnectionDB {
 		}
 	}
 
+	/**
+	 * Closes a ResultSet
+	 *
+	 * @param rs
+	 *            the ResultSet you want to close
+	 */
+	public static void closeResultSet(ResultSet rs) {
+		try {
+			if (rs != null) {
+				rs.close();
+			}
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			throw new RuntimeException();
+		}
+	}
+	
+	/**
+	 * Closes a PreparedStatement
+	 * 
+	 * @param pstm
+	 *            the PreparedStatement you want to close
+	 */
+	public static void closePreparedStatement(PreparedStatement pstm) {
+		try {
+			if (pstm != null) {
+				pstm.close();
+			}
+		} catch (SQLException e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			throw new RuntimeException();
+		}
+	}
+	
 }

@@ -10,6 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.excilys.cdb.service.ComputerServiceImpl;
 
+/**
+ * Remove one or several computers from the database
+ * 
+ * @author sclaudet
+ *
+ */
 @WebServlet("/delete-computer")
 public class DeleteComputer extends HttpServlet {
 

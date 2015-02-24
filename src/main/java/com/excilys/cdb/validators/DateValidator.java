@@ -5,6 +5,12 @@ import java.util.regex.Pattern;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
+/**
+ * Validates the date format
+ * 
+ * @author sclaudet
+ *
+ */
 public class DateValidator implements ConstraintValidator<Date, String> {
 
 	public static final String DATE_REGEX = "^(19|20)[0-9][0-9](-)((0[1-9])|(1[0-2]))(-)((0[1-9])|([1-2][0-9])|(3[0-1]))(T|\\s)(([0-1][0-9])|(2[0-3])):([0-5][0-9])";
