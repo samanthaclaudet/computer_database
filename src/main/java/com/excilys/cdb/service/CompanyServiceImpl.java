@@ -6,13 +6,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.exceptions.SQLRuntimeException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.persistence.CompanyDAOImpl;
 import com.excilys.cdb.persistence.ComputerDAOImpl;
 import com.excilys.cdb.persistence.ConnectionDB;
 import com.excilys.cdb.service.interfaces.CompanyService;
-
-import exceptions.SQLRuntimeException;
 
 /**
  * @see CompanyDAOImpl
@@ -35,7 +34,10 @@ public enum CompanyServiceImpl implements CompanyService {
 	 * @return the list of all companies in the database
 	 */
 	public List<Company> getAll() {
-		return CompanyDAOImpl.INSTANCE.getAll();
+		ConnectionDB.openConnection(true);
+		List<Company> listCompanies = CompanyDAOImpl.INSTANCE.getAll();
+		ConnectionDB.closeConnection(false);
+		return listCompanies;
 	}
 
 	/**
@@ -45,7 +47,10 @@ public enum CompanyServiceImpl implements CompanyService {
 	 * @return a Company whose id was passed as parameter
 	 */
 	public Company getById(int id) {
-		return CompanyDAOImpl.INSTANCE.getById(id);
+		ConnectionDB.openConnection(true);
+		Company company = CompanyDAOImpl.INSTANCE.getById(id);
+		ConnectionDB.closeConnection(false);
+		return company;
 	}
 
 	/**
@@ -56,7 +61,8 @@ public enum CompanyServiceImpl implements CompanyService {
 	 *            the id of the company you want to delete
 	 */
 	public void delete(int id) {
-		Connection conn = ConnectionDB.getConnection(false); // set AutoCommit to false	
+		ConnectionDB.openConnection(false); // set AutoCommit to false	
+		Connection conn = ConnectionDB.getConnection();
 		try {
 			ComputerDAOImpl.INSTANCE.delete(id, conn); // deletes all the computer with that company first
 			CompanyDAOImpl.INSTANCE.delete(id, conn); // deletes the comnpany
@@ -66,7 +72,7 @@ public enum CompanyServiceImpl implements CompanyService {
 			ConnectionDB.cancelTransaction(conn); // rollback
 			throw new RuntimeException();
 		} finally {
-			ConnectionDB.closeConnection(conn, true); // commit then close the connection
+			ConnectionDB.closeConnection(true); // commit then close the connection
 		}
 	}
 	

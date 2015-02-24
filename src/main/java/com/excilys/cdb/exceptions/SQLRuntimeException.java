@@ -1,4 +1,4 @@
-package exceptions;
+package com.excilys.cdb.exceptions;
 
 /**
  * Exception returned when a problem occurs during the deletion of a company

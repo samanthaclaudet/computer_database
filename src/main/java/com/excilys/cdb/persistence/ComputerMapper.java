@@ -33,7 +33,7 @@ public enum ComputerMapper implements RowMapper<Computer> {
 		Computer c = null;
 
 		if (r.getInt("company_id") != 0) {
-			company = CompanyDAOImpl.INSTANCE.getById(r.getInt("company_id"));
+			company = new Company(r.getInt("company.id"), r.getString("company.name"));
 		}
 		LocalDateTime ldti = null, ldtd = null;
 		if (r.getTimestamp("introduced") != null) {

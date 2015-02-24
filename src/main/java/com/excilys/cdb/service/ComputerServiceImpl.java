@@ -5,6 +5,7 @@ import java.util.List;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.Page;
 import com.excilys.cdb.persistence.ComputerDAOImpl;
+import com.excilys.cdb.persistence.ConnectionDB;
 import com.excilys.cdb.service.interfaces.ComputerService;
 
 /**
@@ -25,7 +26,10 @@ public enum ComputerServiceImpl implements ComputerService {
 	 * @return total number of computers in the database (int)
 	 */
 	public int getNbComputers() {
-		return ComputerDAOImpl.INSTANCE.getNbComputers();
+		ConnectionDB.openConnection(true);
+		int nb = ComputerDAOImpl.INSTANCE.getNbComputers();
+		ConnectionDB.closeConnection(false);
+		return nb;
 	}
 
 	/**
@@ -34,7 +38,10 @@ public enum ComputerServiceImpl implements ComputerService {
 	 * @return the list of all computers in the database
 	 */
 	public List<Computer> getAll() {
-		return ComputerDAOImpl.INSTANCE.getAll();
+		ConnectionDB.openConnection(true);
+		List<Computer> listComputers = ComputerDAOImpl.INSTANCE.getAll();
+		ConnectionDB.closeConnection(false);
+		return listComputers;
 	}
 
 	/**
@@ -44,7 +51,10 @@ public enum ComputerServiceImpl implements ComputerService {
 	 * @return a Computer whose id was passed as parameter
 	 */
 	public Computer getById(int id) {
-		return ComputerDAOImpl.INSTANCE.getById(id);
+		ConnectionDB.openConnection(true);
+		Computer computer = ComputerDAOImpl.INSTANCE.getById(id);
+		ConnectionDB.closeConnection(false);
+		return computer;
 	}
 
 	/**
@@ -54,7 +64,10 @@ public enum ComputerServiceImpl implements ComputerService {
 	 * @return a Page with all computers containing the name
 	 */
 	public Page getByName(String name, int idx, int size) {
-		return ComputerDAOImpl.INSTANCE.getByName(name, idx, size);
+		ConnectionDB.openConnection(true);
+		Page page = ComputerDAOImpl.INSTANCE.getByName(name, idx, size);
+		ConnectionDB.closeConnection(false);
+		return page;
 	}
 	
 	/**
@@ -67,7 +80,10 @@ public enum ComputerServiceImpl implements ComputerService {
 	 * @return a page
 	 */
 	public Page getPage(int idx, int size) {
-		return ComputerDAOImpl.INSTANCE.getPage(idx, size);
+		ConnectionDB.openConnection(true);
+		Page page = ComputerDAOImpl.INSTANCE.getPage(idx, size);
+		ConnectionDB.closeConnection(false);
+		return page;
 	}
 
 	/**
@@ -77,7 +93,9 @@ public enum ComputerServiceImpl implements ComputerService {
 	 *            the computer you want to add in the database
 	 */
 	public void set(Computer c) {
+		ConnectionDB.openConnection(true);
 		ComputerDAOImpl.INSTANCE.set(c);
+		ConnectionDB.closeConnection(false);
 	}
 
 	/**
@@ -90,7 +108,9 @@ public enum ComputerServiceImpl implements ComputerService {
 	 *            the new computer that will replace the one in the database
 	 */
 	public void update(int id, Computer c) {
+		ConnectionDB.openConnection(true);
 		ComputerDAOImpl.INSTANCE.update(id, c);
+		ConnectionDB.closeConnection(false);
 	}
 
 	/**
@@ -100,7 +120,9 @@ public enum ComputerServiceImpl implements ComputerService {
 	 *            the id of the computer you want to delete
 	 */
 	public void delete(int id) {
+		ConnectionDB.openConnection(true);
 		ComputerDAOImpl.INSTANCE.delete(id);
+		ConnectionDB.closeConnection(false);
 	}
 
 }

@@ -1,6 +1,5 @@
 import static org.junit.Assert.*;
 
-import java.sql.SQLException;
 import java.util.List;
 
 import org.junit.BeforeClass;
@@ -26,10 +25,8 @@ public class CompanyDAOImplTest {
 	/**
 	 * Test getById with an illegal call
 	 * 
-	 * @throws SQLException
 	 */
-	//@Test(expected = SQLException.class)
-	public void testGetByIDNegative() /*throws SQLException*/{
+	public void testGetByIDNegative() {
 		Company c = CompanyDAOImpl.INSTANCE.getById(-1);
 		assertNull(c);
 	}

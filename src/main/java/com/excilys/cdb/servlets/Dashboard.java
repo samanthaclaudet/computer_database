@@ -55,7 +55,7 @@ public class Dashboard extends HttpServlet {
 		if (searchName == null) {
 			// all results
 			p = ComputerServiceImpl.INSTANCE.getPage(pageNumber - 1, nbComputerPerPage);
-			nbComputers = ComputerServiceImpl.INSTANCE.getNbComputers();
+			nbComputers = p.getNbComputers();
 		}
 		else {
 			// search by name

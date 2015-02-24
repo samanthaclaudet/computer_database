@@ -7,7 +7,7 @@ import com.excilys.cdb.model.Company;
  * 
  * @author sclaudet
  *
- * @see Computer
+ * @see com.excilys.cdb.model.Computer
  */
 public class ComputerDTO {
     private int id;

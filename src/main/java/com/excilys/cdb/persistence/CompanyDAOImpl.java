@@ -9,11 +9,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.excilys.cdb.exceptions.SQLRuntimeException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.persistence.interfaces.CompanyDAO;
 import com.excilys.cdb.ui.Util;
-
-import exceptions.SQLRuntimeException;
 
 /**
  * CompanyDAO makes the connection between the database and the Company object
@@ -45,7 +44,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
 	 */
 	public List<Company> getAll() {
 		List<Company> lc = null;
-		Connection conn = ConnectionDB.getConnection(true);
+		Connection conn = ConnectionDB.getConnection();
 		PreparedStatement pstm = null;
 		ResultSet r = null;
 		try {
@@ -60,7 +59,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
 		} finally {
 			ConnectionDB.closeResultSet(r);
 			ConnectionDB.closePreparedStatement(pstm);
-			ConnectionDB.closeConnection(conn, false);
+			//ConnectionDB.closeConnection(conn, false);
 		}
 		return lc;
 	}
@@ -73,7 +72,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
 	 */
 	public Company getById(int id) {
 		Company c = null;
-		Connection conn = ConnectionDB.getConnection(true);
+		Connection conn = ConnectionDB.getConnection();
 		PreparedStatement pstm = null;
 		ResultSet r = null;
 		try {
@@ -91,7 +90,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
 		} finally {
 			ConnectionDB.closeResultSet(r);
 			ConnectionDB.closePreparedStatement(pstm);
-			ConnectionDB.closeConnection(conn, false);
+			//ConnectionDB.closeConnection(conn, false);
 		}
 		return c;
 	}

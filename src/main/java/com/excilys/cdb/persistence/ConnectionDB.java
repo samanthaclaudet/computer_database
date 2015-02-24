@@ -22,8 +22,9 @@ import com.excilys.cdb.utilsdb.DatabaseProperties;
  */
 public enum ConnectionDB {
 	INSTANCE;
-
+	
 	private static BoneCP connectionPool = null;
+	private static ThreadLocal<Connection> threadConnection = new ThreadLocal<Connection>();
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(ConnectionDB.class);
@@ -55,19 +56,30 @@ public enum ConnectionDB {
 	 * 
 	 * @return a connection
 	 */
-	public static Connection getConnection(boolean isAutoCommit) {
+	public static Connection getConnection() {
+		return threadConnection.get();
+	}
+
+	/**
+	 * Opens a connection in a thread
+	 * 
+	 * @param isAutoCommit
+	 */
+	public static void openConnection(boolean isAutoCommit) {
 		Connection conn = null;
 		try {
 			conn = connectionPool.getConnection();
 			conn.setAutoCommit(isAutoCommit);
+			if (threadConnection.get() == null) {
+				threadConnection.set(conn);
+			}
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
 		}
-		return conn;
 	}
-
+	
 	/**
 	 * Rollsback a connection when a transaction failed
 	 * 
@@ -75,9 +87,9 @@ public enum ConnectionDB {
 	 */
 	public static void cancelTransaction(Connection conn) {
 		try {
-			if (conn != null) {
+			if (threadConnection.get() != null) {
 				System.err.print("Transaction is being rolled back");
-		        conn.rollback();
+				threadConnection.get().rollback();
 			}
 		} catch(SQLException e) {
 		      	logger.error(e.getMessage());
@@ -90,16 +102,16 @@ public enum ConnectionDB {
 	 * Closes a Connection (sends it back to the pool)
 	 * Commits it first if it's a transaction
 	 * 
-	 * @param conn
-	 *            the Connection you want to close
+	 * @param isTransaction
 	 */
-	public static void closeConnection(Connection conn, boolean isTransaction) {
+	public static void closeConnection(boolean isTransaction) {
 		try {
-			if (conn != null) {
+			if (threadConnection.get() != null) {
 				if (isTransaction) {
-					conn.commit();
+					threadConnection.get().commit();
 				}
-				conn.close();
+				threadConnection.get().close();
+				threadConnection.set(null);
 			}
 		} catch (SQLException e) {
 			logger.error(e.getMessage());

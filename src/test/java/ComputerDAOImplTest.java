@@ -1,6 +1,5 @@
 import static org.junit.Assert.*;
 
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -30,10 +29,8 @@ public class ComputerDAOImplTest {
 	/**
 	 * Test getById with an illegal call
 	 * 
-	 * @throws SQLException
 	 */
-	//@Test(expected = SQLException.class)
-	public void testGetByIDNegative() /*throws SQLException*/ {
+	public void testGetByIDNegative() {
 		
 		Computer c = ComputerDAOImpl.INSTANCE.getById(-1);
 		assertNull(c);
