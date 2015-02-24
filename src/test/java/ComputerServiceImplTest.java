@@ -85,11 +85,11 @@ public class ComputerServiceImplTest {
 		
 		doAnswer(new Answer<Void>() {
 			public Void answer(InvocationOnMock invocation) {
-				Computer c = computers.get(2);
-				c.setCompany(company1);
+				Computer c = computers.get(0);
+				c.setCompany(company2);
 				return null;
 			}
-		}).when(mockDAO).set(any(Computer.class));
+		}).when(mockDAO).update(any(int.class), any(Computer.class));
 		
 	}
 
@@ -136,8 +136,10 @@ public class ComputerServiceImplTest {
 	 */
 	@Test
 	public void testAdd() {
-		ComputerServiceImpl.INSTANCE.set(new Computer("Computer 4", null, null, null));
 		List<Computer> listActual = ComputerServiceImpl.INSTANCE.getAll();
+		assertEquals(2, listActual.size());
+		ComputerServiceImpl.INSTANCE.set(new Computer("Computer 4", null, null, null));
+		listActual = ComputerServiceImpl.INSTANCE.getAll();
 		assertEquals(3, listActual.size());
 	}
 	
@@ -146,9 +148,9 @@ public class ComputerServiceImplTest {
 	 */
 	@Test
 	public void testUpdate() {
-		ComputerServiceImpl.INSTANCE.update(3, new Computer("Computer 3", null, null, company1));
-		Computer c = ComputerServiceImpl.INSTANCE.getById(3);
-		assertEquals(new Computer(3, "Computer 3", null, null, company1), c);
+		ComputerServiceImpl.INSTANCE.update(1, new Computer("Computer 1", ldt1, ldt2, company2));
+		Computer c = ComputerServiceImpl.INSTANCE.getById(1);
+		assertEquals(new Computer(1, "Computer 1", ldt1, ldt2, company2), c);
 	}
 	
 }
