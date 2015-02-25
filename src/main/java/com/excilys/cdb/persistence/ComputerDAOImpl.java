@@ -52,13 +52,17 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	 * 
 	 * @return total number of computers in the database (int)
 	 */
-	public int getNbComputers() {
+	public int getNbComputers(String name) {
 		int nb = 0;
+		name = "%" + name + "%";
 		Connection conn = ConnectionDB.getConnection();
 		PreparedStatement pstm = null;
 		ResultSet r = null;
 		try {
-			pstm = conn.prepareStatement("SELECT COUNT(*) FROM computer");
+			pstm = conn.prepareStatement("SELECT COUNT(*) FROM computer LEFT JOIN company ON computer.company_id = company.id"
+						+ " WHERE computer.name LIKE ? OR company.name LIKE ?");
+			pstm.setString(1, name);
+			pstm.setString(2, name);
 			r = pstm.executeQuery();
 			if (r.next()) {
 				nb = r.getInt(1);
@@ -70,7 +74,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 		} finally {
 			ConnectionDB.closeResultSet(r);
 			ConnectionDB.closePreparedStatement(pstm);
-			//ConnectionDB.closeConnection(conn, false);
+			ConnectionDB.closeConnection();
 		}
 		return nb;
 	}
@@ -103,10 +107,9 @@ public enum ComputerDAOImpl implements ComputerDAO {
 		} finally {
 			ConnectionDB.closeResultSet(r);
 			ConnectionDB.closePreparedStatement(pstm);
-			//ConnectionDB.closeConnection(conn, false);
+			ConnectionDB.closeConnection();
 		}
-		
-		Page p = new Page(size, getNbComputers(), idx);
+		Page p = new Page(size, 0, idx);
 		p.setComputers(DTOMapper.listToDto(lc));
 		return p;
 	}
@@ -133,7 +136,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 		} finally {
 			ConnectionDB.closeResultSet(r);
 			ConnectionDB.closePreparedStatement(pstm);
-			//ConnectionDB.closeConnection(conn, false);
+			ConnectionDB.closeConnection();
 		}
 		return lc;
 	}
@@ -164,7 +167,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 		} finally {
 			ConnectionDB.closeResultSet(r);
 			ConnectionDB.closePreparedStatement(pstm);
-			//ConnectionDB.closeConnection(conn, false);
+			ConnectionDB.closeConnection();
 		}
 		return c;
 	}
@@ -177,11 +180,10 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	 */
 	public Page getByName(String name, int idx, int size) {
 		name = "%" + name + "%";
-		List<Computer> lc = null;
+		List<Computer> lc = new ArrayList<Computer>();
 		Connection conn = ConnectionDB.getConnection();
 		PreparedStatement pstm = null, pstm2 = null;
 		ResultSet r = null;
-		int nb;
 		try {
 			pstm = conn.prepareStatement("SELECT * FROM computer LEFT JOIN company ON computer.company_id = company.id"
 					+ " WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY computer.id LIMIT ?, ?");
@@ -191,21 +193,10 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			pstm.setInt(3, idx * size);
 			pstm.setInt(4, size);
 			r = pstm.executeQuery();
-			if (!r.next()) {
-				nb = 0;
-				lc = new ArrayList<Computer>();
-			} else {
-				r.previous();
+			if (r.next()) {
 				// mapping the ResultSet into a list of computers
 				lc = ComputerMapper.INSTANCE.toList(r);
-				
-				pstm2 = conn.prepareStatement("SELECT COUNT(*) FROM computer LEFT JOIN company ON computer.company_id = company.id"
-						+ " WHERE computer.name LIKE ? OR company.name LIKE ?");
-				pstm2.setString(1, name);
-				pstm2.setString(2, name);
-				r = pstm2.executeQuery();
-				r.next();
-				nb = r.getInt(1);
+
 			}
 		} catch (SQLException e) {
 			logger.error(e.getMessage());
@@ -215,9 +206,9 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			ConnectionDB.closeResultSet(r);
 			ConnectionDB.closePreparedStatement(pstm);
 			ConnectionDB.closePreparedStatement(pstm2);
-			//ConnectionDB.closeConnection(conn, false);
+			ConnectionDB.closeConnection();
 		}
-		Page p = new Page(size, nb, idx);
+		Page p = new Page(size, 0, idx);
 		p.setComputers(DTOMapper.listToDto(lc));
 		return p;
 	}
@@ -266,7 +257,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			throw new RuntimeException();
 		} finally {
 			ConnectionDB.closePreparedStatement(pstm);
-			//ConnectionDB.closeConnection(conn, false);
+			ConnectionDB.closeConnection();
 		}
 	}
 
@@ -318,7 +309,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			throw new RuntimeException();
 		} finally {
 			ConnectionDB.closePreparedStatement(pstm);
-			//ConnectionDB.closeConnection(conn, false);
+			ConnectionDB.closeConnection();
 		}
 	}
 
@@ -341,8 +332,8 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			e.printStackTrace();
 			throw new RuntimeException();
 		} finally {
-		ConnectionDB.closePreparedStatement(pstm);
-		//ConnectionDB.closeConnection(conn, false);
+			ConnectionDB.closePreparedStatement(pstm);
+			ConnectionDB.closeConnection();
 		}
 	}
 
@@ -351,10 +342,9 @@ public enum ComputerDAOImpl implements ComputerDAO {
 	 * 
 	 * @param id
 	 *            the id of the company you want to delete
-	 * @param conn
-	 * 			  the connection used
 	 */
-	public void delete(int id, Connection conn) throws SQLRuntimeException{
+	public void deleteFromCompany(int id) throws SQLRuntimeException{
+		Connection conn = ConnectionDB.getConnection();
 		PreparedStatement pstm = null;
 		try {
 			pstm = conn.prepareStatement("DELETE FROM computer WHERE company_id=" + id);
@@ -366,6 +356,7 @@ public enum ComputerDAOImpl implements ComputerDAO {
 			throw new SQLRuntimeException();
 		} finally {
 			ConnectionDB.closePreparedStatement(pstm);
+			ConnectionDB.closeConnection();
 		}
 	}
 	

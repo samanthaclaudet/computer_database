@@ -45,8 +45,8 @@ public class Page {
 		this.nbPages = (int) Math.ceil((double) nbComputers
 				/ (double) nbPerPage);
 		this.computers = new ArrayList<ComputerDTO>();
-		this.range = new int[] { Math.max(0, idx - 5),
-				Math.min(nbPages, idx + 5) };
+		this.range = new int[] { Math.max(0, this.idx - 5),
+				Math.min(this.nbPages, this.idx + 5) };
 	}
 
 	/**
@@ -66,6 +66,16 @@ public class Page {
 				Math.min(nbPages, idx + 5) };
 	}
 
+	/**
+	 * Updates the total number of pages and the range
+	 */
+	private void updatePageValues() {
+		this.nbPages = (int) Math.ceil((double) this.nbComputers
+				/ (double) this.nbComputerPerPage);
+		this.range = new int[] { Math.max(0, this.idx - 5),
+				Math.min(this.nbPages, this.idx + 5) };
+	}
+	
 	/**
 	 * 
 	 * @return range
@@ -98,6 +108,15 @@ public class Page {
 		return this.nbComputers;
 	}
 
+	/**
+	 * 
+	 * @param nb
+	 */
+	public void setNbComputers(int nb) {
+		this.nbComputers = nb;
+		updatePageValues();
+	}
+	
 	/**
 	 * 
 	 * @return list of computerDTOs

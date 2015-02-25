@@ -21,8 +21,6 @@ public interface AbstractDAO<T> {
 		System.out.println("Not implemented");
 	}
 
-	public default void delete(int id) {
-		System.out.println("Not implemented");
-	}
+	public void delete(int id);
 	
 }

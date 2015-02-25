@@ -57,23 +57,49 @@ public enum ConnectionDB {
 	 * @return a connection
 	 */
 	public static Connection getConnection() {
+		try {
+			if (threadConnection.get() == null) {
+				threadConnection.set(connectionPool.getConnection());
+			}
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			throw new RuntimeException();
+		}	
 		return threadConnection.get();
 	}
 
 	/**
-	 * Opens a connection in a thread
-	 * 
-	 * @param isAutoCommit
+	 * Opens a transaction
 	 */
-	public static void openConnection(boolean isAutoCommit) {
+	public static void initTransaction() {
 		Connection conn = null;
 		try {
 			conn = connectionPool.getConnection();
-			conn.setAutoCommit(isAutoCommit);
+			conn.setAutoCommit(false);
 			if (threadConnection.get() == null) {
 				threadConnection.set(conn);
 			}
+			System.out.println("Transaction started");
 		} catch (Exception e) {
+			logger.error(e.getMessage());
+			e.printStackTrace();
+			throw new RuntimeException();
+		}
+	}
+
+	/**
+	 * Closes a transaction
+	 */
+	public static void terminateTransaction() {
+		try {
+			if (threadConnection.get() != null) {
+					threadConnection.get().commit();
+					threadConnection.get().close();
+					threadConnection.set(null);
+					System.out.println("Transaction completed");
+			}
+		} catch (SQLException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
 			throw new RuntimeException();
@@ -85,11 +111,13 @@ public enum ConnectionDB {
 	 * 
 	 * @param conn
 	 */
-	public static void cancelTransaction(Connection conn) {
+	public static void cancelTransaction() {
 		try {
 			if (threadConnection.get() != null) {
 				System.err.print("Transaction is being rolled back");
 				threadConnection.get().rollback();
+				threadConnection.get().close();
+				threadConnection.set(null);
 			}
 		} catch(SQLException e) {
 		      	logger.error(e.getMessage());
@@ -104,12 +132,9 @@ public enum ConnectionDB {
 	 * 
 	 * @param isTransaction
 	 */
-	public static void closeConnection(boolean isTransaction) {
+	public static void closeConnection() {
 		try {
-			if (threadConnection.get() != null) {
-				if (isTransaction) {
-					threadConnection.get().commit();
-				}
+			if (threadConnection.get() != null && threadConnection.get().getAutoCommit()) {
 				threadConnection.get().close();
 				threadConnection.set(null);
 			}

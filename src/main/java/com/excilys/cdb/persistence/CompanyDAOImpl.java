@@ -59,7 +59,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
 		} finally {
 			ConnectionDB.closeResultSet(r);
 			ConnectionDB.closePreparedStatement(pstm);
-			//ConnectionDB.closeConnection(conn, false);
+			ConnectionDB.closeConnection();
 		}
 		return lc;
 	}
@@ -90,7 +90,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
 		} finally {
 			ConnectionDB.closeResultSet(r);
 			ConnectionDB.closePreparedStatement(pstm);
-			//ConnectionDB.closeConnection(conn, false);
+			ConnectionDB.closeConnection();
 		}
 		return c;
 	}
@@ -100,10 +100,9 @@ public enum CompanyDAOImpl implements CompanyDAO {
 	 * 
 	 * @param id
 	 *            the id of the company you want to delete
-	 * @param conn
-	 * 			  the connection used
 	 */
-	public void delete(int id, Connection conn) throws SQLRuntimeException{
+	public void delete(int id) throws SQLRuntimeException{
+		Connection conn = ConnectionDB.getConnection();
 		PreparedStatement pstm = null;
 		try {
 			pstm = conn.prepareStatement("DELETE FROM company WHERE id=" + id);
@@ -118,6 +117,7 @@ public enum CompanyDAOImpl implements CompanyDAO {
 			throw new SQLRuntimeException();
 		} finally {
 			ConnectionDB.closePreparedStatement(pstm);
+			ConnectionDB.closeConnection();
 		}
 	}
 

@@ -1,6 +1,5 @@
 package com.excilys.cdb.persistence.interfaces;
 
-import java.sql.Connection;
 import java.util.List;
 
 import com.excilys.cdb.model.Computer;
@@ -13,7 +12,7 @@ import com.excilys.cdb.model.Page;
  */
 public interface ComputerDAO extends AbstractDAO<Computer> {
 
-	public int getNbComputers();
+	public int getNbComputers(String name);
 
 	public Page getPage(int idx, int size);
 
@@ -29,5 +28,5 @@ public interface ComputerDAO extends AbstractDAO<Computer> {
 
 	public void delete(int id);
 	
-	public void delete(int id, Connection conn);
+	public void deleteFromCompany(int id);
 }

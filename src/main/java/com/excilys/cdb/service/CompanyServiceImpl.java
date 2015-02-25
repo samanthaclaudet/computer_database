@@ -1,6 +1,5 @@
 package com.excilys.cdb.service;
 
-import java.sql.Connection;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -34,10 +33,7 @@ public enum CompanyServiceImpl implements CompanyService {
 	 * @return the list of all companies in the database
 	 */
 	public List<Company> getAll() {
-		ConnectionDB.openConnection(true);
-		List<Company> listCompanies = CompanyDAOImpl.INSTANCE.getAll();
-		ConnectionDB.closeConnection(false);
-		return listCompanies;
+		return CompanyDAOImpl.INSTANCE.getAll();
 	}
 
 	/**
@@ -47,10 +43,7 @@ public enum CompanyServiceImpl implements CompanyService {
 	 * @return a Company whose id was passed as parameter
 	 */
 	public Company getById(int id) {
-		ConnectionDB.openConnection(true);
-		Company company = CompanyDAOImpl.INSTANCE.getById(id);
-		ConnectionDB.closeConnection(false);
-		return company;
+		return CompanyDAOImpl.INSTANCE.getById(id);
 	}
 
 	/**
@@ -61,18 +54,17 @@ public enum CompanyServiceImpl implements CompanyService {
 	 *            the id of the company you want to delete
 	 */
 	public void delete(int id) {
-		ConnectionDB.openConnection(false); // set AutoCommit to false	
-		Connection conn = ConnectionDB.getConnection();
+		ConnectionDB.initTransaction(); // set AutoCommit to false	
 		try {
-			ComputerDAOImpl.INSTANCE.delete(id, conn); // deletes all the computer with that company first
-			CompanyDAOImpl.INSTANCE.delete(id, conn); // deletes the comnpany
+			ComputerDAOImpl.INSTANCE.deleteFromCompany(id); // deletes all the computer with that company first
+			CompanyDAOImpl.INSTANCE.delete(id); // deletes the comnpany
 		} catch (SQLRuntimeException e) {
 			logger.error(e.getMessage());
 			e.printStackTrace();
-			ConnectionDB.cancelTransaction(conn); // rollback
+			ConnectionDB.cancelTransaction(); // rollback
 			throw new RuntimeException();
 		} finally {
-			ConnectionDB.closeConnection(true); // commit then close the connection
+			ConnectionDB.terminateTransaction(); // commit then close the connection
 		}
 	}
 	

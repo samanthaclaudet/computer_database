@@ -88,7 +88,7 @@ public class ComputerDAOImplTest {
 	 */
 	@Test
 	public void testGetNbComputers() {
-		int nb = ComputerDAOImpl.INSTANCE.getNbComputers();
+		int nb = ComputerDAOImpl.INSTANCE.getNbComputers("");
 		assertEquals(574, nb);
 	}
 
@@ -116,7 +116,7 @@ public class ComputerDAOImplTest {
 		Computer cExpected = new Computer(575, "MyComputer2", ldt, null,
 				new Company(42, "Research In Motion"));
 		ComputerDAOImpl.INSTANCE.set(cTest);
-		assertEquals(575, ComputerDAOImpl.INSTANCE.getNbComputers());
+		assertEquals(575, ComputerDAOImpl.INSTANCE.getNbComputers(""));
 		assertEquals(cExpected, ComputerDAOImpl.INSTANCE.getById(575));
 	}
 
@@ -141,7 +141,7 @@ public class ComputerDAOImplTest {
 	@Test
 	public void testDelete() {
 		ComputerDAOImpl.INSTANCE.delete(575);
-		assertEquals(574, ComputerDAOImpl.INSTANCE.getNbComputers());
+		assertEquals(574, ComputerDAOImpl.INSTANCE.getNbComputers(""));
 		assertNull(ComputerDAOImpl.INSTANCE.getById(575));
 	}
 
