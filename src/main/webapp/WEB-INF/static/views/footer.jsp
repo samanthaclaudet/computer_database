@@ -3,6 +3,6 @@
 
 <footer class="navbar-fixed-bottom">
 	<div class="container text-center">
-		<mylib:pagination page="${page}" search="${search}"></mylib:pagination>
+		<mylib:pagination page="${page}" search="${search}" order="${order}" language="${language}"/>
 	</div>
 </footer>

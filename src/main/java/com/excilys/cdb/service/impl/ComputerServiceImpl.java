@@ -1,10 +1,13 @@
-package com.excilys.cdb.service;
+package com.excilys.cdb.service.impl;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.Page;
-import com.excilys.cdb.persistence.ComputerDAOImpl;
+import com.excilys.cdb.persistence.impl.ComputerDAOImpl;
 import com.excilys.cdb.service.interfaces.ComputerService;
 
 /**
@@ -13,10 +16,13 @@ import com.excilys.cdb.service.interfaces.ComputerService;
  * @author sclaudet
  *
  */
-public enum ComputerServiceImpl implements ComputerService {
-	INSTANCE;
-
-	private ComputerServiceImpl() {
+@Service
+public class ComputerServiceImpl implements ComputerService {
+	
+	@Autowired
+	ComputerDAOImpl computerDAOImpl;
+	
+	public ComputerServiceImpl() {
 	}
 
 	/**
@@ -25,7 +31,7 @@ public enum ComputerServiceImpl implements ComputerService {
 	 * @return total number of computers in the database (int)
 	 */
 	public int getNbComputers() {
-		return ComputerDAOImpl.INSTANCE.getNbComputers("");
+		return computerDAOImpl.getNbComputers("");
 	}
 
 	/**
@@ -34,7 +40,7 @@ public enum ComputerServiceImpl implements ComputerService {
 	 * @return the list of all computers in the database
 	 */
 	public List<Computer> getAll() {
-		return ComputerDAOImpl.INSTANCE.getAll();
+		return computerDAOImpl.getAll();
 	}
 
 	/**
@@ -44,34 +50,25 @@ public enum ComputerServiceImpl implements ComputerService {
 	 * @return a Computer whose id was passed as parameter
 	 */
 	public Computer getById(int id) {
-		return ComputerDAOImpl.INSTANCE.getById(id);
+		return computerDAOImpl.getById(id);
 	}
 
 	/**
-	 * Gets Computers by their name or the name of their company
+	 * Gets a Page, can look for Computers by their name or the name of their company
 	 * 
 	 * @param name
-	 * @return a Page with all computers containing the name
-	 */
-	public Page getByName(String name, int idx, int size) {
-		Page p = ComputerDAOImpl.INSTANCE.getByName(name, idx, size);
-		int nb = ComputerDAOImpl.INSTANCE.getNbComputers(name);
-		p.setNbComputers(nb);
-		return p;
-	}
-	
-	/**
-	 * Gets a page
-	 * 
+	 * 			  name of the computer or the company you are looking for
 	 * @param idx
-	 *            offest for the select query
+	 *            offset for the select query
 	 * @param size
 	 *            number of computers per page
-	 * @return a page
+	 * @param orderBy
+	 * 			  order by feature
+	 * @return a Page with all computers containing the name
 	 */
-	public Page getPage(int idx, int size) {
-		Page p = ComputerDAOImpl.INSTANCE.getPage(idx, size);
-		int nb = ComputerDAOImpl.INSTANCE.getNbComputers("");
+	public Page getPage(String name, int idx, int size, String orderBy) {
+		Page p = computerDAOImpl.getPage(name, idx, size, orderBy);
+		int nb = computerDAOImpl.getNbComputers(name);
 		p.setNbComputers(nb);
 		return p;
 	}
@@ -83,7 +80,7 @@ public enum ComputerServiceImpl implements ComputerService {
 	 *            the computer you want to add in the database
 	 */
 	public void set(Computer c) {
-		ComputerDAOImpl.INSTANCE.set(c);
+		computerDAOImpl.set(c);
 	}
 
 	/**
@@ -96,7 +93,7 @@ public enum ComputerServiceImpl implements ComputerService {
 	 *            the new computer that will replace the one in the database
 	 */
 	public void update(int id, Computer c) {
-		ComputerDAOImpl.INSTANCE.update(id, c);
+		computerDAOImpl.update(id, c);
 	}
 
 	/**
@@ -106,7 +103,7 @@ public enum ComputerServiceImpl implements ComputerService {
 	 *            the id of the computer you want to delete
 	 */
 	public void delete(int id) {
-		ComputerDAOImpl.INSTANCE.delete(id);
+		computerDAOImpl.delete(id);
 	}
 
 }

@@ -10,7 +10,10 @@ public class SQLRuntimeException extends RuntimeException {
 
 	private static final long serialVersionUID = 1L;
 
-	public SQLRuntimeException() {
+	public SQLRuntimeException() { }
+	
+	public SQLRuntimeException(String message) {
+		super(message);
 		System.out.println("An error occurred, the transaction is being rolled back");
 	}
 	

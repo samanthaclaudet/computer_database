@@ -6,11 +6,16 @@ import java.util.List;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.Page;
-import com.excilys.cdb.persistence.ComputerDAOImpl;
+import com.excilys.cdb.persistence.impl.ComputerDAOImpl;
 import com.excilys.cdb.utilsdb.DatabaseLoader;
 
 /**
@@ -19,8 +24,13 @@ import com.excilys.cdb.utilsdb.DatabaseLoader;
  * @author sclaudet
  *
  */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:/application-context-test.xml" })
 public class ComputerDAOImplTest {
 
+	@Autowired
+	ComputerDAOImpl computerDAOImpl;
+	
 	@BeforeClass
 	public static void setUp() {
 		DatabaseLoader.INSTANCE.load();
@@ -30,18 +40,19 @@ public class ComputerDAOImplTest {
 	 * Test getById with an illegal call
 	 * 
 	 */
-	public void testGetByIDNegative() {
+	@Test(expected=DataAccessException.class)
+	public void testGetByIDNegative() throws DataAccessException {
 		
-		Computer c = ComputerDAOImpl.INSTANCE.getById(-1);
+		Computer c = computerDAOImpl.getById(-1);
 		assertNull(c);
 	}
 
 	/**
 	 * Test getById with a legal call invalid
 	 */
-	@Test
-	public void testGetByIDNotExisting() {
-		Computer c = ComputerDAOImpl.INSTANCE.getById(1000);
+	@Test(expected=DataAccessException.class)
+	public void testGetByIDNotExisting() throws DataAccessException {
+		Computer c = computerDAOImpl.getById(1000);
 		assertNull(c);
 	}
 	
@@ -50,7 +61,7 @@ public class ComputerDAOImplTest {
 	 */
 	@Test
 	public void testGetByIDEqual1() {
-		Computer cActual = ComputerDAOImpl.INSTANCE.getById(1);
+		Computer cActual = computerDAOImpl.getById(1);
 		Computer cExpected = new Computer(1, "MacBook Pro 15.4 inch", null,
 				null, new Company(1, "Apple Inc."));
 		assertEquals(cExpected, cActual);
@@ -61,7 +72,7 @@ public class ComputerDAOImplTest {
 	 */
 	@Test
 	public void testGetByIDEqual574() {
-	Computer cActual = ComputerDAOImpl.INSTANCE.getById(574);
+	Computer cActual = computerDAOImpl.getById(574);
 		LocalDateTime ldt = LocalDateTime.parse("2011-10-14 00:00",
 				DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
 		Computer cExpected = new Computer(574, "iPhone 4S", ldt, null,
@@ -74,7 +85,7 @@ public class ComputerDAOImplTest {
 	 */
 	@Test
 	public void testGetAll() {
-		List<Computer> listActual = ComputerDAOImpl.INSTANCE.getAll();
+		List<Computer> listActual = computerDAOImpl.getAll();
 		assertEquals(574, listActual.size());
 		LocalDateTime ldt = LocalDateTime.parse("2008-01-01 00:00",
 				DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
@@ -88,7 +99,7 @@ public class ComputerDAOImplTest {
 	 */
 	@Test
 	public void testGetNbComputers() {
-		int nb = ComputerDAOImpl.INSTANCE.getNbComputers("");
+		int nb = computerDAOImpl.getNbComputers("");
 		assertEquals(574, nb);
 	}
 
@@ -97,9 +108,9 @@ public class ComputerDAOImplTest {
 	 */
 	@Test
 	public void testGetPage() {		
-		Page page = ComputerDAOImpl.INSTANCE.getPage(0, 10);
+		Page page = computerDAOImpl.getPage("", 0, 10, "");
 		assertEquals(10, page.getComputers().size());
-		Page page2 = ComputerDAOImpl.INSTANCE.getPage(10, 10);
+		Page page2 = computerDAOImpl.getPage("", 10, 10, "");
 		assertEquals(10, page2.getComputers().size());
 		assertEquals(101, page2.getComputers().get(0).getId());
 	}
@@ -115,9 +126,9 @@ public class ComputerDAOImplTest {
 				"Research In Motion"));
 		Computer cExpected = new Computer(575, "MyComputer2", ldt, null,
 				new Company(42, "Research In Motion"));
-		ComputerDAOImpl.INSTANCE.set(cTest);
-		assertEquals(575, ComputerDAOImpl.INSTANCE.getNbComputers(""));
-		assertEquals(cExpected, ComputerDAOImpl.INSTANCE.getById(575));
+		computerDAOImpl.set(cTest);
+		assertEquals(575, computerDAOImpl.getNbComputers(""));
+		assertEquals(cExpected, computerDAOImpl.getById(575));
 	}
 
 	/**
@@ -131,8 +142,8 @@ public class ComputerDAOImplTest {
 				"Apple Inc."));
 		Computer cExpected = new Computer(2, "MyComputer", ldt, null,
 				new Company(1, "Apple Inc."));
-		ComputerDAOImpl.INSTANCE.update(2, cTest);
-		assertEquals(cExpected, ComputerDAOImpl.INSTANCE.getById(2));
+		computerDAOImpl.update(2, cTest);
+		assertEquals(cExpected, computerDAOImpl.getById(2));
 	}
 
 	/**
@@ -140,9 +151,9 @@ public class ComputerDAOImplTest {
 	 */
 	@Test
 	public void testDelete() {
-		ComputerDAOImpl.INSTANCE.delete(575);
-		assertEquals(574, ComputerDAOImpl.INSTANCE.getNbComputers(""));
-		assertNull(ComputerDAOImpl.INSTANCE.getById(575));
+		computerDAOImpl.delete(575);
+		assertEquals(574, computerDAOImpl.getNbComputers(""));
+		assertNull(computerDAOImpl.getById(575));
 	}
 
 }

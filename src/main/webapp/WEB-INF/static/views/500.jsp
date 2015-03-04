@@ -1,24 +1,18 @@
 <!-- <!DOCTYPE html> -->
 <%@ page language="java" contentType="text/html; charset=UTF-8"
      pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>  
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
 <jsp:include page="header.jsp"/>
-<body>
-	<header class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container">
-			<a class="navbar-brand" href="dashboard"> Application - Computer Database </a>
-		</div>
-	</header>
 
 	<section id="main">
 		<div class="container">	
 			<div class="alert alert-danger">
-				Error 500: An error has occured!
-				<br/>
+				<spring:message code="label.errorOccured" />
 				<!-- stacktrace -->
 			</div>
 		</div>

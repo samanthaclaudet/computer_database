@@ -1,34 +1,20 @@
-package com.excilys.cdb.persistence;
+package com.excilys.cdb.persistence.mappers;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 
+import org.springframework.stereotype.Component;
+import org.springframework.jdbc.core.RowMapper;
+
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.persistence.interfaces.RowMapper;
 
-/**
- * ComputerMapper is used to map the result of a query into :
- * <ul>
- * <li>a Computer with toObject(ResultSet r)</li>
- * <li>a list of Computers with toList(ResultSet r), implemented by default</li>
- * </ul>
- * It implements the interface RowMapper
- * 
- * @author sclaudet
- *
- */
-public enum ComputerMapper implements RowMapper<Computer> {
-	INSTANCE;
+@Component
+public class ComputerMapperSpring implements RowMapper<Computer>{
 
-	/**
-	 * @param the
-	 *            resultset of the query
-	 * @return a computer
-	 */
 	@Override
-	public Computer toObject(ResultSet r) throws SQLException {
+	public Computer mapRow(ResultSet r, int arg1) throws SQLException {
 		Company company = null;
 		Computer c = null;
 

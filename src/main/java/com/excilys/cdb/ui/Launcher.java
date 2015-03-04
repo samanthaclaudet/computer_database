@@ -1,6 +1,7 @@
 package com.excilys.cdb.ui;
 
-import java.sql.SQLException;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * 
@@ -9,10 +10,14 @@ import java.sql.SQLException;
  */
 public class Launcher {
 
-	public static void main(String[] args) throws SQLException {
-		CLI.run();
-
+	public static void main(String[] args) {
+		
+		AbstractApplicationContext context = new ClassPathXmlApplicationContext("/application-context.xml");
+		CLI cli = context.getBean(CLI.class);
+		
+		cli.run();
 		System.out.println("End of programm");
+		context.close();
 		System.exit(0);
 	}
 

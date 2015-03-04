@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 /**
  * Gets the connections properties :
@@ -22,8 +23,8 @@ import org.slf4j.LoggerFactory;
  * @author sclaudet
  *
  */
-public enum DatabaseProperties {
-	INSTANCE;
+@Component
+public class DatabaseProperties {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(DatabaseProperties.class);

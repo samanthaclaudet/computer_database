@@ -2,35 +2,32 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib prefix="mylib" tagdir="/WEB-INF/tags"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 <html>
-<jsp:include page="header.jsp" />
-<body>
-	<header class="navbar navbar-inverse navbar-fixed-top">
-	<div class="container">
-		<a class="navbar-brand" href="dashboard" name="search" value="">
-			Application - Computer Database </a>
-	</div>
-	</header>
+<jsp:include page="header-dashboard.jsp" />
 
 	<section id="main">
 	<div class="container">
-		<h1 id="homeTitle">${ nbcomputers } Computers found</h1>
+		<h1 id="homeTitle">${ nbcomputers } <spring:message code="label.computerFound" /></h1>
 		<div id="actions" class="form-horizontal">
 			<div class="pull-left">
 				<form id="searchForm" action="#" method="GET" class="form-inline">
-
 					<input type="search" id="searchbox" name="search"
-						class="form-control" placeholder="Search name" /> <input
-						type="submit" id="searchsubmit" value="Filter by name"
+						class="form-control" placeholder="<spring:message code="label.searchName" />" /> 
+					<input type="submit" id="searchsubmit" value="<spring:message code="label.filter" />"
 						class="btn btn-primary" />
+
+
 				</form>
 			</div>
 			<div class="pull-right">
-				<a class="btn btn-success" id="addComputer" href="add-computer">Add Computer</a>
-				<a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();">Edit</a>
+				<a class="btn btn-success" id="addComputer" href="add-computer"><spring:message code="label.addComputer" /></a>
+				<a class="btn btn-default" id="editComputer" href="#" onclick="$.fn.toggleEditMode();"><spring:message code="label.editComputer" /></a>
 				<a class="btn btn-success" id="deleteCompany" href="delete-company">Delete Company</a>
 			</div>
 		</div>
@@ -54,19 +51,19 @@
 								class="fa fa-trash-o fa-lg"></i>
 						</a>
 					</span></th>
-					<th>Computer name</th>
-					<th>Introduced date</th>
+					<th><a class="navbar-brand" href="<mylib:link target="dashboard" index="${page.idx+1}" nbPerPage="${page.nbComputerPerPage}" search="${search}" order="computerName" language="${language}"/>"><spring:message code="label.computerName" /></a></th>
+					<th><a class="navbar-brand" href="<mylib:link target="dashboard" index="${page.idx+1}" nbPerPage="${page.nbComputerPerPage}" search="${search}" order="introduced" language="${language}"/>"><spring:message code="label.introducedDate" /></a></th>
 					<!-- Table header for Discontinued Date -->
-					<th>Discontinued date</th>
+					<th><a class="navbar-brand" href="<mylib:link target="dashboard" index="${page.idx+1}" nbPerPage="${page.nbComputerPerPage}" search="${search}" order="discontinued" language="${language}"/>"><spring:message code="label.discontinuedDate" /></a></th>
 					<!-- Table header for Company -->
-					<th>Company</th>
+					<th><a class="navbar-brand" href="<mylib:link target="dashboard" index="${page.idx+1}" nbPerPage="${page.nbComputerPerPage}" search="${search}" order="company" language="${language}"/>"><spring:message code="label.company" /></a></th>
 
 				</tr>
 			</thead>
 			<!-- Browse attribute computers -->
 			<c:choose>
 				<c:when test="${ nbcomputers == 0 }">
-					<p>No computers found</p>
+					<p><spring:message code="label.noFound" /></p>
 				</c:when>
 				<c:otherwise>
 					<tbody id="results">
@@ -88,6 +85,13 @@
 		</table>
 	</div>
 	</section>
+
+	<script type="text/javascript">
+		var strings = new Array();
+		strings['delete_confirm_msg'] = "<spring:message code='label.deleteConfirm' javaScriptEscape='true' />";
+		strings['view_button'] = "<spring:message code='label.view' javaScriptEscape='true' />";
+		strings['edit_button'] = "<spring:message code='label.edit' javaScriptEscape='true' />";
+	</script>
 
 	<c:if test="${ nbcomputers != 0 }">
 		<jsp:include page="footer.jsp" />

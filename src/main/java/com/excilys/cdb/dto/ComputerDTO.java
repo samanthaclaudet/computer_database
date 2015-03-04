@@ -1,6 +1,9 @@
 package com.excilys.cdb.dto;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import com.excilys.cdb.model.Company;
+import com.excilys.cdb.validators.Date;
 
 /**
  * Same as Computer, dates are passed as String
@@ -11,8 +14,11 @@ import com.excilys.cdb.model.Company;
  */
 public class ComputerDTO {
     private int id;
+    @NotBlank
     private String name;
+    @Date
     private String introduced;
+    @Date
     private String discontinued;
     private Company company;
 

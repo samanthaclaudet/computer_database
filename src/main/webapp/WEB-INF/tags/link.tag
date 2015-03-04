@@ -5,5 +5,7 @@
 <%@ attribute name="index" required="true"%>
 <%@ attribute name="nbPerPage" required="true"%>
 <%@ attribute name="search" required="true"%>
+<%@ attribute name="order" required="true"%>
+<%@ attribute name="language" required="true"%>
 
-<c:url value="${target}?page=${index}&nbPerPage=${nbPerPage}&search=${search}"/>
+<c:url value="${target}?page=${index}&nbPerPage=${nbPerPage}&search=${search}&order=${order}&language=${language}"/>

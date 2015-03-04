@@ -9,18 +9,19 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.*;
 
 import org.powermock.reflect.Whitebox;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 
 import com.excilys.cdb.model.Company;
-import com.excilys.cdb.persistence.CompanyDAOImpl;
-import com.excilys.cdb.service.CompanyServiceImpl;
+import com.excilys.cdb.persistence.impl.CompanyDAOImpl;
+import com.excilys.cdb.service.impl.CompanyServiceImpl;
 
 /**
  * Tests for {@link CompanyServiceImpl}.
@@ -28,13 +29,19 @@ import com.excilys.cdb.service.CompanyServiceImpl;
  * @author sclaudet
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(CompanyDAOImpl.class) 
+@RunWith(MockitoJUnitRunner.class)
+//@RunWith(PowerMockRunner.class)
+//@PrepareForTest(CompanyDAOImpl.class)
+
+@ContextConfiguration(locations = { "classpath:/application-context-test.xml" })
 public class CompanyServiceImplTest {
 
 	@Mock private static CompanyDAOImpl companyDao;
 	private static  Company company1, company2, company3;
 	private static List<Company> companies;
+	
+	@Autowired
+	private CompanyServiceImpl companyServiceImpl;
 	
 	@BeforeClass
 	public static void setUp() {
@@ -68,7 +75,7 @@ public class CompanyServiceImplTest {
 	 */
 	@Test
 	public void testGetByIDNotExisting() {
-		Company c = CompanyServiceImpl.INSTANCE.getById(100);
+		Company c = companyServiceImpl.getById(100);
 		assertNull(c);
 	}
 
@@ -77,7 +84,7 @@ public class CompanyServiceImplTest {
 	 */
 	@Test
 	public void testGetByIDEqual1() {
-		Company cActual = CompanyServiceImpl.INSTANCE.getById(1);
+		Company cActual = companyServiceImpl.getById(1);
 		assertEquals(company1, cActual);
 	}
 
@@ -86,7 +93,7 @@ public class CompanyServiceImplTest {
 	 */
 	@Test
 	public void testGetAll() {
-		List<Company> listActual = CompanyServiceImpl.INSTANCE.getAll();
+		List<Company> listActual = companyServiceImpl.getAll();
 		assertEquals(3, listActual.size());
 		assertEquals(company2, listActual.get(1));
 	}
@@ -96,8 +103,8 @@ public class CompanyServiceImplTest {
 	 */
 	@Test
 	public void testDelete() {
-		CompanyServiceImpl.INSTANCE.delete(3);
-		List<Company> listActual = CompanyServiceImpl.INSTANCE.getAll();
+		companyServiceImpl.delete(3);
+		List<Company> listActual = companyServiceImpl.getAll();
 		assertEquals(2, listActual.size());
 	}
 	

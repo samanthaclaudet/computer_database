@@ -9,23 +9,24 @@ import java.util.List;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
+import org.mockito.InjectMocks;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.powermock.core.classloader.annotations.PrepareForTest;
 
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.*;
 
-import org.powermock.reflect.Whitebox;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.persistence.ComputerDAOImpl;
-import com.excilys.cdb.service.CompanyServiceImpl;
-import com.excilys.cdb.service.ComputerServiceImpl;
+import com.excilys.cdb.persistence.impl.ComputerDAOImpl;
+import com.excilys.cdb.service.impl.CompanyServiceImpl;
+import com.excilys.cdb.service.impl.ComputerServiceImpl;
 
 /**
  * Tests for {@link CompanyServiceImpl}.
@@ -33,15 +34,20 @@ import com.excilys.cdb.service.ComputerServiceImpl;
  * @author sclaudet
  *
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(ComputerDAOImpl.class) 
+@RunWith(MockitoJUnitRunner.class)
+//@RunWith(PowerMockRunner.class)
+//@PrepareForTest(ComputerDAOImpl.class)
+@ContextConfiguration(locations = { "classpath:/application-context-test.xml" })
 public class ComputerServiceImplTest {
 
-	@Mock private static ComputerDAOImpl computerDao;
+	@InjectMocks private static ComputerDAOImpl mockDAO; //computerDao;
 	private static  Computer computer1, computer2, computer3, computer4;
 	private static Company company1, company2;
 	private static LocalDateTime ldt1, ldt2;
 	private static List<Computer> computers;
+	
+	@Autowired
+	ComputerServiceImpl computerServiceImpl;
 	
 	@BeforeClass
 	public static void setUp() {
@@ -60,8 +66,9 @@ public class ComputerServiceImplTest {
 		computers.add(computer2);
 		computers.add(computer3);
 
+		// when ComputerDAOImpl used to be a singleton...
 		ComputerDAOImpl mockDAO = mock(ComputerDAOImpl.class);
-		Whitebox.setInternalState(ComputerDAOImpl.class, "INSTANCE", mockDAO);
+		//Whitebox.setInternalState(ComputerDAOImpl.class, "INSTANCE", mockDAO);
 
 		when(mockDAO.getAll()).thenReturn(computers);
 		when(mockDAO.getById(100)).thenReturn(null);
@@ -98,7 +105,7 @@ public class ComputerServiceImplTest {
 	 */
 	@Test
 	public void testGetByIDNotExisting() {
-		Computer c = ComputerServiceImpl.INSTANCE.getById(100);
+		Computer c = computerServiceImpl.getById(100);
 		assertNull(c);
 	}
 
@@ -107,7 +114,7 @@ public class ComputerServiceImplTest {
 	 */
 	@Test
 	public void testGetByIDEqual1() {
-		Computer cActual = ComputerServiceImpl.INSTANCE.getById(1);
+		Computer cActual = computerServiceImpl.getById(1);
 		assertEquals(computer1, cActual);
 	}
 
@@ -116,7 +123,7 @@ public class ComputerServiceImplTest {
 	 */
 	@Test
 	public void testGetAll() {
-		List<Computer> listActual = ComputerServiceImpl.INSTANCE.getAll();
+		List<Computer> listActual = computerServiceImpl.getAll();
 		assertEquals(3, listActual.size());
 		assertEquals(computer2, listActual.get(1));
 	}
@@ -126,8 +133,8 @@ public class ComputerServiceImplTest {
 	 */
 	@Test
 	public void testDelete() {
-		ComputerServiceImpl.INSTANCE.delete(3);
-		List<Computer> listActual = ComputerServiceImpl.INSTANCE.getAll();
+		computerServiceImpl.delete(3);
+		List<Computer> listActual = computerServiceImpl.getAll();
 		assertEquals(2, listActual.size());
 	}
 	
@@ -136,10 +143,10 @@ public class ComputerServiceImplTest {
 	 */
 	@Test
 	public void testAdd() {
-		List<Computer> listActual = ComputerServiceImpl.INSTANCE.getAll();
+		List<Computer> listActual = computerServiceImpl.getAll();
 		assertEquals(2, listActual.size());
-		ComputerServiceImpl.INSTANCE.set(new Computer("Computer 4", null, null, null));
-		listActual = ComputerServiceImpl.INSTANCE.getAll();
+		computerServiceImpl.set(new Computer("Computer 4", null, null, null));
+		listActual = computerServiceImpl.getAll();
 		assertEquals(3, listActual.size());
 	}
 	
@@ -148,8 +155,8 @@ public class ComputerServiceImplTest {
 	 */
 	@Test
 	public void testUpdate() {
-		ComputerServiceImpl.INSTANCE.update(1, new Computer("Computer 1", ldt1, ldt2, company2));
-		Computer c = ComputerServiceImpl.INSTANCE.getById(1);
+		computerServiceImpl.update(1, new Computer("Computer 1", ldt1, ldt2, company2));
+		Computer c = computerServiceImpl.getById(1);
 		assertEquals(new Computer(1, "Computer 1", ldt1, ldt2, company2), c);
 	}
 	

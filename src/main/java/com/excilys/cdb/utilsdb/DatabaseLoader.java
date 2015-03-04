@@ -7,8 +7,6 @@ import java.io.InputStreamReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.excilys.cdb.servlets.Dashboard;
-
 /**
  * Reload a new database for tests
  * 
@@ -19,15 +17,13 @@ public enum DatabaseLoader {
 	INSTANCE;
 	
 	private static final Logger logger = LoggerFactory
-			.getLogger(Dashboard.class);
+			.getLogger(DatabaseLoader.class);
 	
 	public void load() {
 		String line;
 		try {
-			Process p = Runtime.getRuntime().exec(
-					"./src/test/resources/script.sh");
-			BufferedReader input = new BufferedReader(new InputStreamReader(
-					p.getInputStream()));
+			Process p = Runtime.getRuntime().exec("./src/test/resources/script.sh");
+			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			while ((line = input.readLine()) != null) {
 				System.out.println(line);
 			}

@@ -8,9 +8,11 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.model.Company;
-import com.excilys.cdb.service.CompanyServiceImpl;
+import com.excilys.cdb.service.impl.CompanyServiceImpl;
 
 /**
  * The Util class is used to check the validity of the user input The input is
@@ -25,7 +27,12 @@ import com.excilys.cdb.service.CompanyServiceImpl;
  * @author sclaudet
  *
  */
+@Component
 public class Util {
+	
+	@Autowired
+	private CompanyServiceImpl companyServiceImpl;
+	
 	/**
 	 * LocalDateTime must follow the pattern "yyyy-mm-dd HH:mm"
 	 */
@@ -34,6 +41,8 @@ public class Util {
 	private static final DateTimeFormatter FORMATTER = DateTimeFormatter
 			.ofPattern("yyyy-MM-dd HH:mm");
 
+
+	
 	private static final Logger logger = LoggerFactory.getLogger(Util.class);
 
 	/**
@@ -119,19 +128,19 @@ public class Util {
 	 * @see CompanyService#getById(int)
 	 * @return a valid Company or null
 	 */
-	public static Company checkCompany(Scanner sc) {
+	public static Company checkCompany(CLI cli, Scanner sc, CompanyServiceImpl companyService) {
 		boolean validEntry = true;
 		int manufacture = 0;
 		Company cy = null;
 		do {
 			// you can only choose an id from the list
-			CLI.listCompanies();
+			cli.listCompanies();
 			manufacture = checkId(sc);
 
 			if (manufacture == 0) {
 				return null;
 			} else if (manufacture > 0) {
-				cy = CompanyServiceImpl.INSTANCE.getById(manufacture);
+				cy = companyService.getById(manufacture);
 			}
 			if (cy == null || manufacture < 0) {
 				System.out

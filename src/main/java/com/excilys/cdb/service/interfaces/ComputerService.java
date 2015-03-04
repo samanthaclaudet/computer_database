@@ -13,14 +13,12 @@ import com.excilys.cdb.model.Page;
 public interface ComputerService {
 
 	public int getNbComputers();
-	
-	public Page getPage(int idx, int size);
-	
+		
 	public List<Computer> getAll();
 
 	public Computer getById(int id);
 	
-	public Page getByName(String name, int idx, int size);
+	public Page getPage(String name, int idx, int size, String orderBy);
 
 	public void set(Computer c);
 

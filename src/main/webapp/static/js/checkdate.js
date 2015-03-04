@@ -11,7 +11,7 @@ $(document).ready(function() {
 	    	}
 	    	else
 	    	{
-	    		alert('Wrong date format');
+	    		alert(strings['error_date_alert']);
  	    		$('.errorintroduced').show();
 	    		event.preventDefault();
     		}
@@ -22,7 +22,33 @@ $(document).ready(function() {
 		   	}
 		   	else
 		   	{
-		   		alert('Wrong date format');
+		   		alert(strings['error_date_alert']);
+	 	   		$('.errordiscontinued').show();
+		   		event.preventDefault();
+	    	}
+   		});
+   		$('#editComputer').click(function(event){
+	    	var dtValIn=$('#introduced').val();
+	    	var dtValDis=$('#discontinued').val();
+	    	
+	    	if(ValidateDate(dtValIn))
+	    	{
+	    		$('.errorintroduced').hide();
+	    	}
+	    	else
+	    	{
+	    		alert(strings['error_date_alert']);
+ 	    		$('.errorintroduced').show();
+	    		event.preventDefault();
+    		}
+	    	
+		   	if(ValidateDate(dtValDis))
+		   	{
+		   		$('.errordiscontinued').hide();
+		   	}
+		   	else
+		   	{
+		   		alert(strings['error_date_alert']);
 	 	   		$('.errordiscontinued').show();
 		   		event.preventDefault();
 	    	}
@@ -32,7 +58,7 @@ $(document).ready(function() {
     		if (dtValue=="") {
     			return true;
     		}
-    		var dtRegex = new RegExp("^(19|20)[0-9][0-9](-)((0[1-9])|(1[0-2]))(-)((0[1-9])|([1-2][0-9])|(3[0-1]))(T|\\s)(([0-1][0-9])|(2[0-3])):([0-5][0-9])");
+    		var dtRegex = new RegExp(strings['error_regex']);
     		return dtRegex.test(dtValue);
     	}
 });

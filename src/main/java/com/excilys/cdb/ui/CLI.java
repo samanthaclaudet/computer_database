@@ -4,12 +4,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.Page;
-//import com.excilys.cdb.model.Page;
-import com.excilys.cdb.service.CompanyServiceImpl;
-import com.excilys.cdb.service.ComputerServiceImpl;
+import com.excilys.cdb.service.impl.CompanyServiceImpl;
+import com.excilys.cdb.service.impl.ComputerServiceImpl;
 
 /**
  * CLI is the user interface of the computer-database program
@@ -26,16 +28,24 @@ import com.excilys.cdb.service.ComputerServiceImpl;
  * @author sclaudet
  *
  */
+@Component
 public class CLI {
+	
+	@Autowired
+	private ComputerServiceImpl computerServiceImpl;
+	
+	@Autowired
+	private CompanyServiceImpl companyServiceImpl;
+	
 	
 	/**
 	 * runProgram becomes false when the user wants to exit the program 
 	 */
-	private static boolean runProgram = true;
+	private boolean runProgram = true;
 	
-	public static Scanner sc= new Scanner(System.in);
+	public Scanner sc= new Scanner(System.in);
 
-	public static void run() {
+	public void run() {
 		do {
 			showMenu();
 			requestTreatment();
@@ -44,7 +54,7 @@ public class CLI {
 		sc.close();
 	}
 
-	public static void showMenu() {
+	public void showMenu() {
 		System.out.println("\n What do you want to do ?");
 		System.out.println("Press 1 -> List computers");
 		System.out.println("Press 2 -> List companies");
@@ -60,7 +70,7 @@ public class CLI {
 	 * requestTreatment retrieves the user input in a loop until the entry is valid
 	 * @see CLI#getUserChoice(String)
 	 */
-	public static void requestTreatment() {
+	public void requestTreatment() {
 		boolean validEntry;
 		do {
 			System.out.print("Your choice : ");
@@ -75,7 +85,7 @@ public class CLI {
 	 * 			the user input
 	 * @return true id the input is valid, false otherwise
 	 */
-	public static boolean getUserChoice(String choice) {
+	public boolean getUserChoice(String choice) {
 		switch (choice) {
 			// list of all computers
 			case "1" : 
@@ -83,8 +93,16 @@ public class CLI {
 				String answer = sc.nextLine();
 				if (answer.toUpperCase().matches("Y")) {
 					// displays result in a page
-					Page p = ComputerServiceImpl.INSTANCE.getPage(0, 100); // 100 computers per page
-					p.menuPage(sc);			
+					Page p = computerServiceImpl.getPage("", 0, 100, ""); // 100 computers per page
+
+					boolean end = false;
+					do {
+						System.out.println(p.toString());
+						end = p.menuPage(sc);	
+						p.setComputers(computerServiceImpl.getPage("", p.getIdx(), 100, "").getComputers());
+					} while (!end);
+					
+					
 				}
 				else {
 					listComputers();
@@ -129,9 +147,9 @@ public class CLI {
 	 * Displays the list of all computers
 	 * @see ComputerService#getAll()
 	 */
-	public static void listComputers() {
+	public void listComputers() {
 		List<Computer> CL;
-		CL = ComputerServiceImpl.INSTANCE.getAll();
+		CL = computerServiceImpl.getAll();
 		for(Computer c : CL ) {
 			System.out.println(c);
 		}
@@ -141,9 +159,9 @@ public class CLI {
 	 * Displays the list of all companies
 	 * @see CompanyService#getAll()
 	 */
-	public static void listCompanies() {
+	public void listCompanies() {
 		List<Company> CL;
-		CL = CompanyServiceImpl.INSTANCE.getAll();
+		CL = companyServiceImpl.getAll();
 		for(Company c : CL ) {
 			System.out.println(c);
 		}
@@ -153,12 +171,12 @@ public class CLI {
 	 * Displays the details of one computer
 	 * @see ComputerService#getById(int)
 	 */
-	public static void showComputer() {
+	public void showComputer() {
 		System.out.println("What is the id of the computer you want to display ?");
 		// check validity of input
 		int id = Util.checkId(sc);
 
-		Computer c = ComputerServiceImpl.INSTANCE.getById(id);
+		Computer c = computerServiceImpl.getById(id);
 		if (c != null) {
 			System.out.println(c);
 		} else {
@@ -170,28 +188,28 @@ public class CLI {
 	 * Adds a computer to the database
 	 * @see ComputerService#set(Computer)
 	 */
-	public static void createComputer() {
+	public void createComputer() {
 		// put the user input into a Computer object
 		Computer c = setComputerData();
 		System.out.println("Computer to add: " + c);
-		ComputerServiceImpl.INSTANCE.set(c);
+		computerServiceImpl.set(c);
 	}
 	
 	/**
 	 * Updates a computer in the database
 	 * @see ComputerService#update(int, Computer)
 	 */
-	public static void updateComputer() {
+	public void updateComputer() {
 		System.out.println("What is the id of the computer you want to modify ?");
 		// check validity of input
 		int id = Util.checkId(sc);
 		Computer newc = null;
 		// put the current entry into a Computer object
-		Computer c = ComputerServiceImpl.INSTANCE.getById(id);
+		Computer c = computerServiceImpl.getById(id);
 		if (c != null) {
 			// put the user entry into a new Computer object
 			newc = updateComputerData(c);
-			ComputerServiceImpl.INSTANCE.update(id, newc);
+			computerServiceImpl.update(id, newc);
 		} else {
 			System.out.println("Wrong id, no computer found");
 		}
@@ -201,22 +219,22 @@ public class CLI {
 	 * Deletes a computer from the database
 	 * @see ComputerService#delete(int)
 	 */
-	public static void deleteComputer(){
+	public void deleteComputer(){
 		System.out.println("What is the id of the computer you want to delete ?");
 		// check validity of input
 		int id = Util.checkId(sc);
-		ComputerServiceImpl.INSTANCE.delete(id);
+		computerServiceImpl.delete(id);
 	}
 	
 	/**
 	 * Deletes a company from the database and all the related computers
 	 * @see CompanyService#delete(int)
 	 */
-	public static void deleteCompany(){
+	public void deleteCompany(){
 		System.out.println("What is the id of the company you want to delete ?");
 		// check validity of input
 		int id = Util.checkId(sc);
-		CompanyServiceImpl.INSTANCE.delete(id);
+		companyServiceImpl.delete(id);
 	}
 	
 	/**
@@ -224,7 +242,7 @@ public class CLI {
 	 * 
 	 * @return a computer based on the user inputs
 	 */
-	public static Computer setComputerData() {
+	public Computer setComputerData() {
 		System.out.println("Please enter the name of the new computer");
 		String name = sc.nextLine();
 		System.out.println("Please enter the date of introduction, format yyyy-MM-dd HH:mm (null if unknown)");
@@ -235,7 +253,7 @@ public class CLI {
 		LocalDateTime ldtd = Util.checkDate(sc);
 		System.out.println("Please enter the company id from the list (0 if unknown)");
 		// check validity of input
-		Company cy = Util.checkCompany(sc);
+		Company cy = Util.checkCompany(this, sc, companyServiceImpl);
 		
 		Computer c = new Computer(name, ldti, ldtd, cy);
 		return c;
@@ -248,7 +266,7 @@ public class CLI {
 	 * 			Current Computer values
 	 * @return new Computer
 	 */
-	public static Computer updateComputerData(Computer c) {
+	public Computer updateComputerData(Computer c) {
 		// update the name of the computer
 		System.out.println("Do you want to change the name of the computer ? Y/N");
 		String answer = sc.nextLine();
@@ -281,7 +299,7 @@ public class CLI {
 		if (answer.toUpperCase().matches("Y")) {
 			System.out.println("Please enter the id of the new company (0 if unknown)");
 			// check validity of input
-			Company cy = Util.checkCompany(sc);
+			Company cy = Util.checkCompany(this, sc, companyServiceImpl);
 			c.setCompany(cy);
 		}
 		return c;

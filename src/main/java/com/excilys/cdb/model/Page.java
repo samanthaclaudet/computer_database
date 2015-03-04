@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Scanner;
 
 import com.excilys.cdb.dto.ComputerDTO;
-import com.excilys.cdb.service.ComputerServiceImpl;
 
 /**
  * Page is composed of :
@@ -178,41 +177,34 @@ public class Page {
 	 * 
 	 * @param sc
 	 */
-	public void menuPage(Scanner sc) {
+	public boolean menuPage(Scanner sc) {
 
-		System.out.println(this.toString());
-		boolean end = false;
-		do {
-			System.out.println("Previous page : P");
-			System.out.println("Next page : N");
-			System.out.println("First page : F");
-			System.out.println("Last page : L");
-			System.out.println("Exit : E");
-			String answer = sc.nextLine();
-			if (answer.toUpperCase().matches("P")) {
-				if (this.idx > 0) {
-					this.idx--;
-				}
+		System.out.println("Previous page : P");
+		System.out.println("Next page : N");
+		System.out.println("First page : F");
+		System.out.println("Last page : L");
+		System.out.println("Exit : E");
+		String answer = sc.nextLine();
+		if (answer.toUpperCase().matches("P")) {
+			if (this.idx > 0) {
+				this.idx--;
 			}
-			if (answer.toUpperCase().matches("N")) {
-				if (this.idx < nbPages) {
-					this.idx++;
-				}
+		}
+		if (answer.toUpperCase().matches("N")) {
+			if (this.idx < nbPages) {
+				this.idx++;
 			}
-			if (answer.toUpperCase().matches("F")) {
-				this.idx = 0;
-			}
-			if (answer.toUpperCase().matches("L")) {
-				this.idx = this.nbPages - 1;
-			}
-			if (answer.toUpperCase().matches("E")) {
-				end = true;
-			}
-
-			this.computers = ComputerServiceImpl.INSTANCE
-					.getPage(this.idx, 100).getComputers();
-			System.out.println(this.toString());
-		} while (!end);
+		}
+		if (answer.toUpperCase().matches("F")) {
+			this.idx = 0;
+		}
+		if (answer.toUpperCase().matches("L")) {
+			this.idx = this.nbPages - 1;
+		}
+		if (answer.toUpperCase().matches("E")) {
+			return true;
+		}
+		return false;
 	}
 
 }
