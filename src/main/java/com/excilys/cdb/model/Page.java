@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import com.excilys.cdb.dto.ComputerDTO;
+import com.excilys.cdb.model.Computer;
 
 /**
  * Page is composed of :
@@ -22,13 +22,25 @@ public class Page {
 	private int nbComputers; // total number of computers
 	private int nbComputerPerPage; // set at instantiation, can't be changed
 	private int nbPages; // total number of pages
-	private List<ComputerDTO> computers;
+	private List<Computer> computers;
 	private int idx; // the number of the page we are currently on
 	private int[] range;
 
 	public Page() {
 	}
 
+    /**
+     * Constructor from PageDTO
+     */
+    public Page(int nbComputers, int nbComputerPerPage, int nbPages, List<Computer> computers, int idx, int[] range) {
+        this.nbComputers = nbComputers;  
+        this.nbComputerPerPage = nbComputerPerPage;
+        this.nbPages = nbPages;
+        this.computers = computers;
+        this.idx = idx;
+        this.range = range;
+    }
+	
 	/**
 	 * Constructor for the first page
 	 * 
@@ -43,7 +55,7 @@ public class Page {
 		this.nbComputerPerPage = nbPerPage;
 		this.nbPages = (int) Math.ceil((double) nbComputers
 				/ (double) nbPerPage);
-		this.computers = new ArrayList<ComputerDTO>();
+		this.computers = new ArrayList<Computer>();
 		this.range = new int[] { Math.max(0, this.idx - 5),
 				Math.min(this.nbPages, this.idx + 5) };
 	}
@@ -118,18 +130,18 @@ public class Page {
 	
 	/**
 	 * 
-	 * @return list of computerDTOs
+	 * @return list of computers
 	 */
-	public List<ComputerDTO> getComputers() {
+	public List<Computer> getComputers() {
 		return computers;
 	}
 
 	/**
 	 * 
-	 * @param computersDTO
+	 * @param computers
 	 */
-	public void setComputers(List<ComputerDTO> computersDTO) {
-		this.computers = computersDTO;
+	public void setComputers(List<Computer> computers) {
+		this.computers = computers;
 	}
 
 	/**
@@ -157,7 +169,7 @@ public class Page {
 	public String toString() {
 		String pageToString = "Page #" + (this.idx + 1) + "/" + this.nbPages
 				+ "\n\n";
-		for (ComputerDTO c : computers) {
+		for (Computer c : computers) {
 			if (c != null) {
 				pageToString += c.toString() + "\n";
 			}

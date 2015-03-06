@@ -146,7 +146,7 @@ public class ComputerDAOImpl implements ComputerDAO {
         .list();
         
         Page p = new Page(size, 0, idx);
-        p.setComputers(DTOMapper.listToDto(lc));
+        p.setComputers(lc);
         return p;
       
       

@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib tagdir="/WEB-INF/tags" prefix="mylib"%>
 
-<%@ attribute name="page" required="true" type="com.excilys.cdb.model.Page"%>
+<%@ attribute name="page" required="true" type="com.excilys.cdb.dto.PageDTO"%>
 <%@ attribute name="search" required="true"%>
 <%@ attribute name="order" required="true"%>
 <%@ attribute name="language" required="true"%>

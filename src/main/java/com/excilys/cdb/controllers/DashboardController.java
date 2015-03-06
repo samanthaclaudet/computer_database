@@ -1,5 +1,7 @@
 package com.excilys.cdb.controllers;
 
+import com.excilys.cdb.dto.DTOMapper;
+import com.excilys.cdb.dto.PageDTO;
 import com.excilys.cdb.model.Page;
 import com.excilys.cdb.service.impl.ComputerServiceImpl;
 
@@ -41,10 +43,12 @@ public class DashboardController {
 		Page p = null;
 
 		p = computerServiceImpl.getPage(searchName, pageNumber - 1, nbComputerPerPage, orderBy);
-		nbComputers = p.getNbComputers();
+
+		PageDTO pageDTO = DTOMapper.pageToDTO(p);
+		nbComputers = pageDTO.getNbComputers();
 
 		map.addAttribute("nbcomputers", nbComputers);
-		map.addAttribute(PARAM_PAGE, p);
+		map.addAttribute(PARAM_PAGE, pageDTO);
 		map.addAttribute(PARAM_SEARCH, searchName);
 		map.addAttribute(PARAM_ORDER, orderBy);
 		map.addAttribute(PARAM_LANGUAGE, language);

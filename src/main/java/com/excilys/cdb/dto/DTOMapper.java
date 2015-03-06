@@ -13,9 +13,11 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
+import com.excilys.cdb.model.Page;
 
 /**
  * Mapping Computer <--> ComputerDTO
+ *     and Page     <--> PageDTO
  * 
  * @author sclaudet
  *
@@ -40,6 +42,42 @@ public class DTOMapper {
       dateTimeFormatter = DateTimeFormatter.ofPattern(formatter);
     }
   
+    /**
+     * Maps a page into a pageDTO
+     * 
+     * @param Page
+     * @return PageDTO
+     */
+    public static PageDTO pageToDTO(Page page) {
+        int nbComputers = page.getNbComputers();
+        int nbComputerPerPage = page.getNbComputerPerPage();
+        int nbPages = page.getNbPages();
+        int idx = page.getIdx();
+        int[] range = page.getRange();
+        
+        List<ComputerDTO> computers = listToDto(page.getComputers());
+      
+        return new PageDTO(nbComputers, nbComputerPerPage, nbPages, computers, idx, range);
+    }
+
+    /**
+     * Maps a pageDTO into a page
+     * 
+     * @param PageDTO
+     * @return Page
+     */
+    public static Page DTOToPage(PageDTO pageDTO) {
+        int nbComputers = pageDTO.getNbComputers();
+        int nbComputerPerPage = pageDTO.getNbComputerPerPage();
+        int nbPages = pageDTO.getNbPages();
+        int idx = pageDTO.getIdx();
+        int[] range = pageDTO.getRange();
+        
+        List<Computer> computers = listFromDto(pageDTO.getComputers());
+
+        return new Page(nbComputers, nbComputerPerPage, nbPages, computers, idx, range);
+    }    
+    
 	/**
 	 * Maps a computer into a computerDTO
 	 * 
