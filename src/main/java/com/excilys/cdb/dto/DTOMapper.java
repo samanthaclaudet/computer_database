@@ -22,18 +22,22 @@ import com.excilys.cdb.model.Computer;
  */
 public class DTOMapper {
   
-    public static DateTimeFormatter dateTimeFormatter;
-    public static Pattern pattern;
+    private static MessageSource message;
+    private static DateTimeFormatter dateTimeFormatter;
+    private static Pattern pattern;
   
     static {
+        AbstractApplicationContext context = new ClassPathXmlApplicationContext("/application-context.xml");
+        message = context.getBean(MessageSource.class);
+        context.close();
+    }
+    
+    public static void getFormat() {
       // Date validation
-      AbstractApplicationContext context = new ClassPathXmlApplicationContext("/application-context.xml");
-      MessageSource message = context.getBean(MessageSource.class);
       String regex = message.getMessage("label.regex", null, LocaleContextHolder.getLocale());
       String formatter = message.getMessage("label.formatter", null, LocaleContextHolder.getLocale());
       pattern = Pattern.compile(regex);
       dateTimeFormatter = DateTimeFormatter.ofPattern(formatter);
-      context.close();
     }
   
 	/**
@@ -46,6 +50,7 @@ public class DTOMapper {
 		int id = computer.getId();
 		String name = computer.getName();
 		String introduced = null;
+		getFormat();
 
 		if (computer.getIntroduced() != null) {
 		    introduced = computer.getIntroduced().format(dateTimeFormatter);
@@ -68,13 +73,13 @@ public class DTOMapper {
 		Computer computer;
 		int id = computerDTO.getId();
 		String name = computerDTO.getName();
+		getFormat();
 		
 		LocalDateTime dateIn = null;
 		String date = computerDTO.getIntroduced().replace('T', ' ');
 		if (pattern.matcher(date).find()) {
           dateIn = LocalDateTime.parse(date, dateTimeFormatter);
         }
-		
 
 		LocalDateTime dateDis = null;
 		date = computerDTO.getDiscontinued().replace('T', ' ');

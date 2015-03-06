@@ -2,15 +2,18 @@ package com.excilys.cdb.persistence.impl;
 
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.exceptions.SQLRuntimeException;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.persistence.interfaces.CompanyDAO;
-import com.excilys.cdb.persistence.mappers.CompanyMapperSpring;
 
 /**
  * CompanyDAO makes the connection between the database and the Company object
@@ -29,8 +32,8 @@ import com.excilys.cdb.persistence.mappers.CompanyMapperSpring;
 @Repository
 public class CompanyDAOImpl implements CompanyDAO {
 	
-	@Autowired
-	private CompanyMapperSpring mapperSpring;
+    @Autowired
+    private SessionFactory sessionFactory;
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -43,8 +46,10 @@ public class CompanyDAOImpl implements CompanyDAO {
 	 * 
 	 * @return the list of all companies in the database
 	 */
+	@Transactional
+	@Override
 	public List<Company> getAll() {
-		return jdbcTemplate.query("SELECT * FROM company", mapperSpring);
+	    return sessionFactory.getCurrentSession().createCriteria(Company.class).list();
 	}
 
 	/**
@@ -53,12 +58,11 @@ public class CompanyDAOImpl implements CompanyDAO {
 	 * @param id
 	 * @return a Company whose id was passed as parameter
 	 */
+    @Transactional
+    @Override
 	public Company getById(int id) {
-		Company c = null;
-		if (id != 0) {
-			c = jdbcTemplate.queryForObject("SELECT * FROM company WHERE id = ?", new Object[] {id}, mapperSpring);
-		}
-		return c;
+		Criteria cr = sessionFactory.getCurrentSession().createCriteria(Company.class);
+		return (Company) cr.add(Restrictions.eq("id", id)).uniqueResult();
 	}
 	
 	/**
@@ -67,12 +71,13 @@ public class CompanyDAOImpl implements CompanyDAO {
 	 * @param id
 	 *            the id of the company you want to delete
 	 */
+    @Override
 	public void delete(int id) throws SQLRuntimeException{
-		try {
-			jdbcTemplate.update("DELETE FROM company WHERE id=?", new Object[] {id});
-		} catch (DataAccessException e) {
-			throw new SQLRuntimeException();
-		}
+        try {
+            sessionFactory.getCurrentSession().delete(this.getById(id));
+        } catch (DataAccessException e) {
+            throw new SQLRuntimeException();
+        }
 	}
 
 }

@@ -31,8 +31,7 @@
 		</property>
 	</bean>
 	
-	<bean id="messageSource"
-        class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
         <property name="basename" value="classpath:messages" />
         <property name="defaultEncoding" value="UTF-8" />
     </bean>
@@ -51,8 +50,31 @@
     <!-- Add this tag to enable annotations transactions -->
 	<tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager"/>
 	
-	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource"/>
+<!-- 	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> -->
+<!-- 		<property name="dataSource" ref="dataSource"/> -->
+<!-- 	</bean> -->
+
+	<!-- Hibernate -->
+	<bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean" >
+	  <property name="dataSource" ref="dataSource" />
+	  <property name="annotatedClasses">
+	    <list>
+	      <value>com.excilys.cdb.model.Company</value>
+	      <value>com.excilys.cdb.model.Computer</value>
+	    </list>
+	  </property>
+	  <property name="hibernateProperties">
+	    <props>
+	      <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+	      <prop key="hibernate.show_sql">true</prop>
+<!-- 	      <prop key="hibernate.current_session_context_class">thread</prop> -->
+	      <prop key="hibernate.hbm2ddl.auto">update</prop>
+	    </props>
+	  </property>
+	</bean>
+
+	<bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory"/>
 	</bean>
 
 </beans>

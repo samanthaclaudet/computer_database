@@ -2,9 +2,15 @@ package com.excilys.cdb.model;
 
 import java.time.LocalDateTime;
 
-import org.hibernate.validator.constraints.NotBlank;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
-import com.excilys.cdb.validators.Date;
+import org.hibernate.annotations.Type;
 
 /**
  * Computer is composed of :
@@ -21,14 +27,28 @@ import com.excilys.cdb.validators.Date;
  * @author sclaudet
  *
  */
+@Entity
+@Table(name="computer")
 public class Computer {
-  private final int     id;
-  @NotBlank
+  
+  @Id
+  @GeneratedValue
+  @Column(name="id")
+  private int     id;
+
+  @Column(name="name")
   private String        name;
-  @Date
+  
+  @Column(name="introduced")
+  @Type(type = "com.excilys.cdb.persistence.mappers.LocalDateTimeMapper")
   private LocalDateTime introduced;
-  @Date
+
+  @Column(name="discontinued")
+  @Type(type = "com.excilys.cdb.persistence.mappers.LocalDateTimeMapper")
   private LocalDateTime discontinued;
+  
+  @ManyToOne
+  @JoinColumn(name="company_id")
   private Company       company;
 
   public Computer() {
@@ -76,6 +96,13 @@ public class Computer {
    */
   public int getId() {
     return id;
+  }
+  
+  /**
+   * @param id
+   */
+  public void setId(int id) {
+    this.id = id;
   }
 
   /**
@@ -150,6 +177,7 @@ public class Computer {
    * 
    * @return String
    */
+  @Override
   public String toString() {
     String computerToString = "Computer #" + this.id;
     computerToString += "\t name : " + this.name;

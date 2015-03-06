@@ -1,19 +1,26 @@
 package com.excilys.cdb.persistence.impl;
 
-import java.sql.Timestamp;
 import java.util.List;
 
+import org.hibernate.Criteria;
+import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Criterion;
+import org.hibernate.criterion.LogicalExpression;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
+import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.dto.DTOMapper;
 import com.excilys.cdb.exceptions.SQLRuntimeException;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.Page;
 import com.excilys.cdb.persistence.interfaces.ComputerDAO;
-import com.excilys.cdb.persistence.mappers.ComputerMapperSpring;
 
 /**
  * ComputerDAO makes the connection between the database and the Computer object
@@ -36,9 +43,9 @@ import com.excilys.cdb.persistence.mappers.ComputerMapperSpring;
  */
 @Repository
 public class ComputerDAOImpl implements ComputerDAO {
-	
-	@Autowired
-	private ComputerMapperSpring mapperSpring;
+  	
+    @Autowired
+    private SessionFactory sessionFactory;
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
@@ -51,13 +58,20 @@ public class ComputerDAOImpl implements ComputerDAO {
 	 * 
 	 * @return total number of computers in the database (int)
 	 */
+	@Transactional
+	@Override
 	public int getNbComputers(String name) {
-		int nb = 0;
-		name = "%" + name + "%";
-		nb = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM computer LEFT JOIN company ON computer.company_id = company.id"
-				+ " WHERE computer.name LIKE ? OR company.name LIKE ?", new Object[] {name, name}, Integer.class);
-		return nb;
-		
+	  name = "%" + name + "%";
+	  Criterion computerName = Restrictions.like("computer.name", name);
+	  Criterion companyName = Restrictions.like("company.name", name);
+	  LogicalExpression orExp = Restrictions.or(computerName, companyName);
+
+	  Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Computer.class, "computer");
+	  criteria.createCriteria("company", "company", JoinType.LEFT_OUTER_JOIN)
+	  .add(orExp)
+	  .setProjection(Projections.rowCount());
+	  int nb = (new Long((Long) criteria.uniqueResult())).intValue();
+	  return nb;
 	}
 	
 	/**
@@ -65,8 +79,10 @@ public class ComputerDAOImpl implements ComputerDAO {
 	 * 
 	 * @return the list of all computers in the database
 	 */
+	@Transactional
+	@Override
 	public List<Computer> getAll() {
-		return jdbcTemplate.query("SELECT * FROM computer", mapperSpring);
+		return sessionFactory.getCurrentSession().createCriteria(Computer.class).list();
 	}
 
 	/**
@@ -75,11 +91,11 @@ public class ComputerDAOImpl implements ComputerDAO {
 	 * @param id
 	 * @return a Computer whose id was passed as parameter
 	 */
+	@Transactional
+	@Override
 	public Computer getById(int id) {
-		Computer c = null;
-		c = jdbcTemplate.queryForObject("SELECT * FROM computer LEFT JOIN company ON computer.company_id = company.id WHERE computer.id = ?",
-		    new Object[] {id}, mapperSpring);
-		return c;
+	    Criteria cr = sessionFactory.getCurrentSession().createCriteria(Computer.class);
+        return (Computer) cr.add(Restrictions.eq("id", id)).uniqueResult();
 	}
 
 	/**
@@ -95,39 +111,45 @@ public class ComputerDAOImpl implements ComputerDAO {
 	 * 			  order by feature
 	 * @return a Page with all computers containing the name
 	 */
+    @Transactional
+    @Override
 	public Page getPage(String name, int idx, int size, String orderBy) {
-		name = "%" + name + "%";
-		List<Computer> lc = null;
-		int column;
 		switch (orderBy) {
 		case "computerName" :
-			column = 2;
-			//orderBy = "computer.name";
+			orderBy = "computer.name";
 			break;
 		case "introduced" :
-			column = 3;
-			//orderBy = "computer.introduced";
+			orderBy = "computer.introduced";
 			break;
 		case "discontinued" :
-			column = 4;
-			//orderBy = "computer.discontinued";
+			orderBy = "computer.discontinued";
 			break;
 		case "company" :
-			column = 7;
-			//orderBy = "company.name";
+			orderBy = "company.name";
 			break;
 		default :
-			column = 1;
-			//orderBy = "computer.id";
+			orderBy = "computer.id";
 			break;
 		}
 
-		lc = jdbcTemplate.query("SELECT * FROM computer LEFT JOIN company ON computer.company_id = company.id"
-				+ " WHERE computer.name LIKE ? OR company.name LIKE ? ORDER BY ? LIMIT ?, ?",
-				new Object[] {name, name, column, idx * size, size}, mapperSpring);
-		Page p = new Page(size, 0, idx);
-		p.setComputers(DTOMapper.listToDto(lc));
-		return p;
+        name = "%" + name + "%";
+        Criterion computerName = Restrictions.like("computer.name", name);
+        Criterion companyName = Restrictions.like("company.name", name);
+        LogicalExpression orExp = Restrictions.or(computerName, companyName);
+  
+        Criteria criteria = sessionFactory.getCurrentSession().createCriteria(Computer.class, "computer");
+        List<Computer> lc = criteria.createCriteria("company", "company", JoinType.LEFT_OUTER_JOIN)
+        .add(orExp)
+        .addOrder(Order.asc(orderBy))
+        .setFirstResult(idx*size)
+        .setMaxResults(size)
+        .list();
+        
+        Page p = new Page(size, 0, idx);
+        p.setComputers(DTOMapper.listToDto(lc));
+        return p;
+      
+      
 	}
 	
 	/**
@@ -136,23 +158,10 @@ public class ComputerDAOImpl implements ComputerDAO {
 	 * @param c
 	 *            the computer you want to add in the database
 	 */
-	public void set(Computer c) {
-		String name = c.getName();
-		Timestamp dateIn = null, dateDis = null;
-		Integer companyId = null;
-		if (c.getIntroduced() != null) {
-			dateIn = Timestamp.valueOf(c.getIntroduced());
-		}
-		if (c.getDiscontinued() != null) {
-			dateDis = Timestamp.valueOf(c.getDiscontinued());
-		}
-		if (c.getCompany() != null) {
-			companyId = c.getCompany().getId();
-		}
-		
-		jdbcTemplate.update("INSERT INTO computer (name, introduced, discontinued, company_id) VALUES (?, ?, ?, ?)",
-		    new Object[] {name, dateIn, dateDis, companyId});
-		
+    @Transactional
+    @Override
+    public void set(Computer c) {
+        sessionFactory.getCurrentSession().save(c); 
 	}
 
 	/**
@@ -164,22 +173,11 @@ public class ComputerDAOImpl implements ComputerDAO {
 	 * @param c
 	 *            the new computer that will replace the one in the database
 	 */
-	public void update(int id, Computer c) {
-		String name = c.getName();
-		Timestamp dateIn = null, dateDis = null;
-		Integer companyId = null;
-		if (c.getIntroduced() != null) {
-			dateIn = Timestamp.valueOf(c.getIntroduced());
-		}
-		if (c.getDiscontinued() != null) {
-			dateDis = Timestamp.valueOf(c.getDiscontinued());
-		}
-		if (c.getCompany() != null) {
-			companyId = c.getCompany().getId();
-		}
-
-		jdbcTemplate.update("UPDATE computer SET name = ?, introduced = ?, discontinued = ?, company_id = ? WHERE id = ?",
-		    new Object[] {name, dateIn, dateDis, companyId, id});
+    @Transactional
+    @Override
+    public void update(int id, Computer c) {
+        sessionFactory.getCurrentSession().update(c);
+      
 	}
 
 	/**
@@ -188,8 +186,10 @@ public class ComputerDAOImpl implements ComputerDAO {
 	 * @param id
 	 *            the id of the computer you want to delete
 	 */
+	@Transactional
+	@Override
 	public void delete(int id) {
-		jdbcTemplate.update("DELETE FROM computer WHERE id=?", new Object[] {id});
+        sessionFactory.getCurrentSession().delete(this.getById(id));
 	}
 
 	/**
@@ -198,12 +198,17 @@ public class ComputerDAOImpl implements ComputerDAO {
 	 * @param id
 	 *            the id of the company you want to delete
 	 */
+	@Override
 	public void deleteFromCompany(int id) throws SQLRuntimeException{
-		try {
-			jdbcTemplate.update("DELETE FROM computer WHERE company_id=?", new Object[] {id});
-		} catch (DataAccessException e) {
-			throw new SQLRuntimeException();
-		}
+	   try {
+	       Criteria cr = sessionFactory.getCurrentSession().createCriteria(Computer.class);
+	       List<Computer> computersToDelete = cr.add(Restrictions.eq("company_id", id)).list();
+	       for (Computer c : computersToDelete) {
+	         sessionFactory.getCurrentSession().delete(c);
+	       }
+       } catch (DataAccessException e) {
+           throw new SQLRuntimeException();
+       }
 	}
 	
 }

@@ -1,5 +1,11 @@
 package com.excilys.cdb.model;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * Company is composed of :
  * <ul>
@@ -10,9 +16,17 @@ package com.excilys.cdb.model;
  * @author sclaudet
  *
  */
+@Entity
+@Table(name = "company")
 public class Company {
-	private final int id;
-	private final String name;
+  
+    @Id
+    @GeneratedValue
+    @Column(name="id")
+	private int id;
+    
+    @Column(name = "name")
+	private String name;
 
 	public Company() {
 		this.id = 0;
@@ -39,6 +53,14 @@ public class Company {
 
 	/**
 	 * 
+	 * @param id
+	 */
+	public void setId (int id) {
+	  this.id = id;
+	}
+	
+	/**
+	 * 
 	 * @return name (String)
 	 */
 	public String getName() {
@@ -46,12 +68,22 @@ public class Company {
 	}
 
 	/**
+     * 
+     * @param name
+     */
+    public void setName (String name) {
+      this.name = name;
+    }
+	
+	/**
 	 * The representation is "Company#ID	name : NAME"
 	 */
+	@Override
 	public String toString() {
 		return "Company #" + this.id + "\t name : " + this.name;
 	}
 
+	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
@@ -60,6 +92,7 @@ public class Company {
 		return result;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
