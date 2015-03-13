@@ -1,4 +1,4 @@
-<%@ tag language="java" pageEncoding="UTF-8" description="Page template" %>
+<%@ tag language="java" pageEncoding="UTF-8" description="Link template" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <%@ attribute name="target" required="true"%>

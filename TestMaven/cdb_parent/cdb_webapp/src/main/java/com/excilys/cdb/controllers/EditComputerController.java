@@ -76,7 +76,7 @@ public class EditComputerController {
 		Company company =  companyServiceImpl.getById(companyId);
 		computerDTO.setCompany(company);
 		Computer c = DTOMapper.DTOToComputer(computerDTO);
-		computerServiceImpl.update(computerId, c);
+		computerServiceImpl.update(c);
 
 		return "redirect: dashboard";
 	}

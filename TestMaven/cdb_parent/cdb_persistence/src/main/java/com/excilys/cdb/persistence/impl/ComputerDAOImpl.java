@@ -22,16 +22,17 @@ import com.excilys.cdb.persistence.interfaces.ComputerDAO;
 
 /**
  * ComputerDAO makes the connection between the database and the Computer object
+ * using Criteria
  * The available methods are :
  * <ul>
  * <li>getAll()</li>
  * <li>getById(int id)</li>
- * <li>getPage(String name, int idx, int size)</li>
- * <li>getNbComputers()</li>
+ * <li>getPage(String name, int idx, int size, String orderBy)</li>
+ * <li>getNbComputers(String name)</li>
  * <li>set(Computer c)</li>
- * <li>update(int id, Computer c)</li>
+ * <li>update(Computer c)</li>
  * <li>delete(int id)</li>
- * <li>delete(int id, Connection conn)</li>
+ * <li>deleteFromCompany(int id)</li>
  * </ul>
  * 
  * @see Computer
@@ -44,15 +45,10 @@ public class ComputerDAOImpl implements ComputerDAO {
   	
     @Autowired
     private SessionFactory sessionFactory;
-	
-	public ComputerDAOImpl() {
-	}
-
-	/**
-	 * Counts the number of computers in the database
-	 * 
-	 * @return total number of computers in the database (int)
-	 */
+    
+	 /**
+	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#getNbComputers(String)
+	  */
 	@Transactional
 	@Override
 	public int getNbComputers(String name) {
@@ -69,23 +65,19 @@ public class ComputerDAOImpl implements ComputerDAO {
 	  return nb;
 	}
 	
-	/**
-	 * Gets a list of all computers
-	 * 
-	 * @return the list of all computers in the database
-	 */
+	 /**
+	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#getAll()
+	  */
+	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
 	public List<Computer> getAll() {
 		return sessionFactory.getCurrentSession().createCriteria(Computer.class).list();
 	}
 
-	/**
-	 * Gets a Computer by its id
-	 * 
-	 * @param id
-	 * @return a Computer whose id was passed as parameter
-	 */
+	 /**
+	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#getById(int)
+	  */
 	@Transactional
 	@Override
 	public Computer getById(int id) {
@@ -93,20 +85,11 @@ public class ComputerDAOImpl implements ComputerDAO {
         return (Computer) cr.add(Restrictions.eq("id", id)).uniqueResult();
 	}
 
-	/**
-	 * Gets a Page, can look for Computers by their name or the name of their company
-	 * 
-	 * @param name
-	 * 			  name of the computer or the company you are looking for
-	 * @param idx
-	 *            offest for the select query
-	 * @param size
-	 *            number of computers per page
-	 * @param orderBy
-	 * 			  order by feature
-	 * @return a Page with all computers containing the name
-	 */
-    @Transactional
+	 /**
+	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#getPage(String, int, int, String)
+	  */
+    @SuppressWarnings("unchecked")
+	@Transactional
     @Override
 	public Page getPage(String name, int idx, int size, String orderBy) {
 		switch (orderBy) {
@@ -143,56 +126,40 @@ public class ComputerDAOImpl implements ComputerDAO {
         Page p = new Page(size, 0, idx);
         p.setComputers(lc);
         return p;
-      
-      
 	}
 	
-	/**
-	 * Inserts the computer passed in parameter into the database
-	 * 
-	 * @param c
-	 *            the computer you want to add in the database
-	 */
+	 /**
+	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#set(Computer)
+	  */
     @Transactional
     @Override
     public void set(Computer c) {
         sessionFactory.getCurrentSession().save(c); 
 	}
 
-	/**
-	 * Replaces the computer in the database at the id passed in parameter by
-	 * the computer passed in parameter
-	 * 
-	 * @param id
-	 *            the id of the computer you want to modify in the database
-	 * @param c
-	 *            the new computer that will replace the one in the database
-	 */
+	 /**
+	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#update(Computer)
+	  */
     @Transactional
     @Override
-    public void update(int id, Computer c) {
+    public void update(Computer c) {
         sessionFactory.getCurrentSession().update(c);
       
 	}
 
-	/**
-	 * Deletes a computer from the database at the id passed in parameter
-	 * 
-	 * @param id
-	 *            the id of the computer you want to delete
-	 */
+	 /**
+	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#delete(int)
+	  */
 	@Transactional
 	@Override
 	public void delete(int id) {
         sessionFactory.getCurrentSession().delete(this.getById(id));
 	}
 
-	/**
-	 * Deletes a computer from the database whose company has the id passed in parameter
-	 * 
-	 * @param id
-	 *            the id of the company you want to delete
-	 */
+	 /**
+	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#deleteFromCompany(int)
+	  */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void deleteFromCompany(int id) throws SQLRuntimeException{
 	   try {

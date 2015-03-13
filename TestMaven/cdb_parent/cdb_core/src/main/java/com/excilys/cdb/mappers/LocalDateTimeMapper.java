@@ -87,6 +87,8 @@ public class LocalDateTimeMapper implements EnhancedUserType, Serializable{
     return original;
   }
 
+
+  @SuppressWarnings("rawtypes")
   @Override
   public Class returnedClass() {
     return LocalDateTime.class;

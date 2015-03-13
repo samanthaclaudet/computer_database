@@ -96,7 +96,7 @@ public class ComputerServiceImplTest {
 				c.setCompany(company2);
 				return null;
 			}
-		}).when(mockDAO).update(any(int.class), any(Computer.class));
+		}).when(mockDAO).update(any(Computer.class));
 		
 	}
 
@@ -155,7 +155,7 @@ public class ComputerServiceImplTest {
 	 */
 	@Test
 	public void testUpdate() {
-		computerServiceImpl.update(1, new Computer("Computer 1", ldt1, ldt2, company2));
+		computerServiceImpl.update(new Computer("Computer 1", ldt1, ldt2, company2));
 		Computer c = computerServiceImpl.getById(1);
 		assertEquals(new Computer(1, "Computer 1", ldt1, ldt2, company2), c);
 	}

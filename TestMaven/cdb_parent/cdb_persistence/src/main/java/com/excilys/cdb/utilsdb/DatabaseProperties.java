@@ -15,9 +15,6 @@ import org.springframework.stereotype.Component;
  * <li>user</li>
  * <li>url</li>
  * <li>password</li>
- * <li>minimum number of connections per partition</li>
- * <li>maximum number of connections per partition</li>
- * <li>number of partitions</li>
  * </ul>
  * 
  * @author sclaudet
@@ -84,36 +81,6 @@ public class DatabaseProperties {
 	public String getDatabasePassword() {
 		Properties prop = getProperties();
 		return prop.getProperty("DB_PASSWD");
-	}
-	
-	/**
-	 * 
-	 * @return the minimum number of connections per partition
-	 */
-	public int getBoneCPMin() {
-		Properties prop = getProperties();
-		String s = prop.getProperty("MIN_CONNECTIONS_PER_PARTITION");
-		return Integer.parseInt(s);
-	}
-	
-	/**
-	 * 
-	 * @return the maximum number of connections per partition
-	 */
-	public int getBoneCPMax() {
-		Properties prop = getProperties();
-		String s = prop.getProperty("MAX_CONNECTIONS_PER_PARTITION");
-		return Integer.parseInt(s);
-	}
-
-	/**
-	 * 
-	 * @return the number of partitions of the connection per partition
-	 */
-	public int getBoneCPPartitions() {
-		Properties prop = getProperties();
-		String s = prop.getProperty("NB_PARTITIONS");
-		return Integer.parseInt(s);
 	}
 
 }

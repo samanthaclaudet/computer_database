@@ -25,12 +25,19 @@ public class UserServiceImpl implements UserService{
 
 	@Autowired
 	private UserDAOImpl userDAOImpl;
-	
+
+	 /**
+	  * @see com.excilys.cdb.service.interfaces.UserService#loadUserByUsername(String)
+	  */
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		User user = userDAOImpl.loadUserByUsername(username);
 		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+		
 		authorities.add(new SimpleGrantedAuthority(user.getRole()));
+		if (user.getRole().equals("ROLE_ADMIN")) {
+			authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+		}
 		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
 				true, true, true, true, authorities);
 

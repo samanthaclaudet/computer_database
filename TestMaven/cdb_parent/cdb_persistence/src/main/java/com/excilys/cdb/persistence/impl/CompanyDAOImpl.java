@@ -16,11 +16,12 @@ import com.excilys.cdb.persistence.interfaces.CompanyDAO;
 
 /**
  * CompanyDAO makes the connection between the database and the Company object
+ * using Criteria
  * The available methods are :
  * <ul>
  * <li>getAll()</li>
  * <li>getById(int id)</li>
- * <li>delete(int id, Connection conn)</li>
+ * <li>delete(int id)</li>
  * </ul>
  * 
  * @see Company
@@ -33,27 +34,20 @@ public class CompanyDAOImpl implements CompanyDAO {
 	
     @Autowired
     private SessionFactory sessionFactory;
-	
-	public CompanyDAOImpl() {
-	}
 
-	/**
-	 * Gets a list of all companies
-	 * 
-	 * @return the list of all companies in the database
-	 */
+	 /**
+	  * @see com.excilys.cdb.persistence.interfaces.CompanyDAO#getAll()
+	  */
+	@SuppressWarnings("unchecked")
 	@Transactional
 	@Override
 	public List<Company> getAll() {
 	    return sessionFactory.getCurrentSession().createCriteria(Company.class).list();
 	}
 
-	/**
-	 * Gets a Company by its id Used to instantiate the Company in a Computer
-	 * 
-	 * @param id
-	 * @return a Company whose id was passed as parameter
-	 */
+	 /**
+	  * @see com.excilys.cdb.persistence.interfaces.CompanyDAO#getById(int)
+	  */
     @Transactional
     @Override
 	public Company getById(int id) {
@@ -61,12 +55,9 @@ public class CompanyDAOImpl implements CompanyDAO {
 		return (Company) cr.add(Restrictions.eq("id", id)).uniqueResult();
 	}
 	
-	/**
-	 * Deletes a company from the database at the id passed in parameter
-	 * 
-	 * @param id
-	 *            the id of the company you want to delete
-	 */
+	 /**
+	  * @see com.excilys.cdb.persistence.interfaces.CompanyDAO#delete(int)
+	  */
     @Override
 	public void delete(int id) throws SQLRuntimeException{
         try {

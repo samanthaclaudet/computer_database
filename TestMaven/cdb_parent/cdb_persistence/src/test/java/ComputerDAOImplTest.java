@@ -142,7 +142,7 @@ public class ComputerDAOImplTest {
 				"Apple Inc."));
 		Computer cExpected = new Computer(2, "MyComputer", ldt, null,
 				new Company(1, "Apple Inc."));
-		computerDAOImpl.update(2, cTest);
+		computerDAOImpl.update(cTest);
 		assertEquals(cExpected, computerDAOImpl.getById(2));
 	}
 

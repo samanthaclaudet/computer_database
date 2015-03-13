@@ -16,11 +16,11 @@ import com.excilys.cdb.dto.ComputerDTO;
  */
 public class PageDTO {
 
-    private int nbComputers; // total number of computers
-    private int nbComputerPerPage; // set at instantiation, can't be changed
-    private int nbPages; // total number of pages
+    private int nbComputers;
+    private int nbComputerPerPage;
+    private int nbPages;
     private List<ComputerDTO> computers;
-    private int idx; // the number of the page we are currently on
+    private int idx;
     private int[] range;
 
     public PageDTO() {

@@ -31,6 +31,9 @@ public class DashboardController {
 	@Autowired
 	private ComputerServiceImpl computerServiceImpl;
 
+	/**
+	 * Displays all the computers with pagination
+	 */
 	@RequestMapping(method=RequestMethod.GET)
 	public String displayComputers(@RequestParam(value = PARAM_LANGUAGE, required = false, defaultValue = "fr") String language,
 	        @RequestParam(value = PARAM_ORDER, required = false, defaultValue = "") String orderBy,

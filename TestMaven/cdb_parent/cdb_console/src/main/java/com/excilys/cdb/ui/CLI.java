@@ -209,7 +209,7 @@ public class CLI {
 		if (c != null) {
 			// put the user entry into a new Computer object
 			newc = updateComputerData(c);
-			computerServiceImpl.update(id, newc);
+			computerServiceImpl.update(newc);
 		} else {
 			System.out.println("Wrong id, no computer found");
 		}

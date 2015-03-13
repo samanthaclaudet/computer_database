@@ -26,36 +26,25 @@ public class CompanyServiceImpl implements CompanyService {
 	
 	@Autowired
 	private ComputerDAOImpl computerDAOImpl;
-	
-	public CompanyServiceImpl() {
-	}
 
-	/**
-	 * Gets a list of all companies
-	 * 
-	 * @return the list of all companies in the database
-	 */
+	 /**
+	  * @see com.excilys.cdb.service.interfaces.CompanyService#getAll()
+	  */
 	public List<Company> getAll() {
 		return companyDAOImpl.getAll();
 	}
 
-	/**
-	 * Gets a Company by its id Used to instantiate the Company in a Computer
-	 * 
-	 * @param id
-	 * @return a Company whose id was passed as parameter
-	 */
+
+	 /**
+	  * @see com.excilys.cdb.service.interfaces.CompanyService#getById(int)
+	  */
 	public Company getById(int id) {
 		return companyDAOImpl.getById(id);
 	}
 
-	/**
-	 * Deletes a company from the database at the id passed in parameter and all
-	 * the related computers in a transaction
-	 * 
-	 * @param id
-	 *            the id of the company you want to delete
-	 */
+	 /**
+	  * @see com.excilys.cdb.service.interfaces.CompanyService#delete(int)
+	  */
 	@Transactional(rollbackFor=SQLRuntimeException.class)
 	public void delete(int id) {
 		computerDAOImpl.deleteFromCompany(id); // deletes all the computer with that company first

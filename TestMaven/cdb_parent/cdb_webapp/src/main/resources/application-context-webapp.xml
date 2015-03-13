@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:security="http://www.springframework.org/schema/security"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:security="http://www.springframework.org/schema/security"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans
 						   http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
 						   http://www.springframework.org/schema/context
 						   http://www.springframework.org/schema/context/spring-context-4.1.xsd
@@ -15,52 +15,39 @@
 
 	<context:annotation-config />
 
-	<security:authentication-manager>
-		<security:authentication-provider user-service-ref='userServiceImpl' />
-	</security:authentication-manager>
+	<!-- spring security and Digest http -->
 
-	<bean id="digestFilter"
-		class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
+	<security:http pattern="/css/**" security="none" />
+	<security:http pattern="/js/**" security="none" />
+	<security:http pattern="/fonts/**" security="none" />
+	<security:http pattern="/png/**" security="none" />
+
+	<bean id="digestFilter" class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
 		<property name="userDetailsService" ref="userServiceImpl" />
 		<property name="authenticationEntryPoint" ref="digestEntryPoint" />
-		<property name="userCache" ref="userCache" />
 	</bean>
 
-	<bean id="digestEntryPoint"
-		class="org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
+	<bean id="digestEntryPoint" class="org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
 		<property name="realmName" value="CDB Realm via Digest Authentication" />
 		<property name="key" value="acegi" />
 		<property name="nonceValiditySeconds" value="10" />
 	</bean>
 
-	<!-- <security:http auto-config='true'> -->
-	<!-- <security:intercept-url pattern="/dashboard" access="ROLE_ADMIN" /> -->
+	<security:authentication-manager>
+		<security:authentication-provider user-service-ref='userServiceImpl' />
+	</security:authentication-manager>
 
 	<security:http use-expressions="true" entry-point-ref="digestEntryPoint">
-		<security:intercept-url pattern="/**"
-			access="isAuthenticated()" />
-
-		<security:custom-filter ref="digestFilter"
-			after="BASIC_AUTH_FILTER" />
+			<security:intercept-url pattern="/add-computer" access="hasRole('ROLE_ADMIN')" />
+			<security:intercept-url pattern="/edit-computer/**" access="hasRole('ROLE_ADMIN')" />
+			<security:intercept-url pattern="/delete-computer" access="hasRole('ROLE_ADMIN')" />
+			<security:intercept-url pattern="/**" access="hasRole('ROLE_USER')" />
+			<security:http-basic />
+			<security:logout/>
+			<security:form-login/>
+		<security:custom-filter ref="digestFilter" after="BASIC_AUTH_FILTER" />
 		<!-- access denied page -->
-		<security:access-denied-handler
-			error-page="/WEB-INF/static/views/403.jsp" />
-
+		<security:access-denied-handler error-page="/WEB-INF/static/views/403.jsp" />
 	</security:http>
-
-
-
-<!-- 	<security:authentication-manager> -->
-<!-- 		<security:authentication-provider> -->
-			<!-- <security:user-service> -->
-			<!-- <security:user name="admincdb" password="qwerty1234" authorities="ROLE_USER" 
-				/> -->
-			<!-- </security:user-service> -->
-<!-- 			<security:jdbc-user-service -->
-<!-- 				data-source-ref="dataSourceUser" -->
-<!-- 				users-by-username-query="select username,password, enabled from users where username=?" -->
-<!-- 				authorities-by-username-query="select username, role from user_roles where username =?" /> -->
-<!-- 		</security:authentication-provider> -->
-<!-- 	</security:authentication-manager> -->
 
 </beans>

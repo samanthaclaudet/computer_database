@@ -17,7 +17,7 @@ public interface AbstractDAO<T> {
 		System.out.println("Not implemented");
 	}
 
-	public default void update(int id, T t) {
+	public default void update(T t) {
 		System.out.println("Not implemented");
 	}
 

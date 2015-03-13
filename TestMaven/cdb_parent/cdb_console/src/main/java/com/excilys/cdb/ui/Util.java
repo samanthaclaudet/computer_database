@@ -123,8 +123,10 @@ public class Util {
 	/**
 	 * Check if the user input matches a valid Company
 	 * 
+	 * @param cli
 	 * @param sc
 	 *            the scanner
+	 * @param companyService
 	 * @see CompanyService#getById(int)
 	 * @return a valid Company or null
 	 */

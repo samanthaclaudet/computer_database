@@ -34,10 +34,10 @@ public class Computer {
   @Id
   @GeneratedValue
   @Column(name="id")
-  private int     id;
+  private int id;
 
   @Column(name="name")
-  private String        name;
+  private String name;
   
   @Column(name="introduced")
   @Type(type = "com.excilys.cdb.mappers.LocalDateTimeMapper")
@@ -49,7 +49,7 @@ public class Computer {
   
   @ManyToOne
   @JoinColumn(name="company_id")
-  private Company       company;
+  private Company company;
 
   public Computer() {
     this.id = 0;

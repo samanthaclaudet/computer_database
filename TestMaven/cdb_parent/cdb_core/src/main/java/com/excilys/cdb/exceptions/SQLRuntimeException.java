@@ -14,7 +14,7 @@ public class SQLRuntimeException extends RuntimeException {
 	
 	public SQLRuntimeException(String message) {
 		super(message);
-		System.out.println("An error occurred, the transaction is being rolled back");
+		System.out.println("An error occurred,the company was not deleted, the transaction is being rolled back");
 	}
 	
 }

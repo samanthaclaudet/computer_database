@@ -15,9 +15,10 @@
 <body>
     <header class="navbar navbar-inverse navbar-fixed-top">
         <div class="container">
+        
             <a class="navbar-brand" href="dashboard"> <spring:message code="label.applicationComputerDatabase" /> </a>
 
-            <div class="btn-group btn-group-sm pull-right" role="group">
+            <div class="btn-group btn-group-sm pull-right" role="group" >
 				<a type="button" href="?language=fr" ${pageContext.response.locale == 'fr' ? 'class="btn btn-primary"' : 'class="btn btn-default"'}>fr</a>
 				<a type="button" href="?language=en" ${pageContext.response.locale == 'en' ? 'class="btn btn-primary"' : 'class="btn btn-default"'}>en</a>
 			</div>

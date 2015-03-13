@@ -8,9 +8,9 @@ import javax.persistence.Table;
 /**
  * User is composed of :
  * <ul>
- * <li>a name</li>
+ * <li>a username</li>
  * <li>a password</li>
- * <li>a role</li>
+ * <li>a role (ROLE_ADMIN or ROLE_USER)</li>
  * </ul>
  * 
  * @author sclaudet
@@ -30,26 +30,50 @@ public class User {
 	@Column(name = "role")
 	private String role;
 
+	/**
+	 * 
+	 * @return a username
+	 */
 	public String getUsername() {
 		return username;
 	}
 
+	/**
+	 * 
+	 * @param username
+	 */
 	public void setUsername(String username) {
 		this.username = username;
 	}
 
+	/**
+	 * 
+	 * @return a password
+	 */
 	public String getPassword() {
 		return password;
 	}
 
+	/**
+	 * 
+	 * @param password
+	 */
 	public void setPassword(String password) {
 		this.password = password;
 	}
 
+	/**
+	 * 
+	 * @return a role
+	 */
 	public String getRole() {
 		return role;
 	}
 
+	/**
+	 * 
+	 * @param role
+	 */
 	public void setRole(String role) {
 		this.role = role;
 	}

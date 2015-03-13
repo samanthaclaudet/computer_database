@@ -9,8 +9,8 @@ import javax.persistence.Table;
 /**
  * Company is composed of :
  * <ul>
- * <li>an identifier that cannot be modified</li>
- * <li>a name that cannot be modified</li>
+ * <li>an identifier</li>
+ * <li>a name</li>
  * </ul>
  * 
  * @author sclaudet

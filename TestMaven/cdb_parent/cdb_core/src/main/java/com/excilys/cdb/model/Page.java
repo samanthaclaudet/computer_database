@@ -9,9 +9,12 @@ import com.excilys.cdb.model.Computer;
 /**
  * Page is composed of :
  * <ul>
- * <li>a number of results per page</li>
+ * <li>the total number of computers to display</li>
+ * <li>the number of computers per page</li>
  * <li>the total number of pages</li>
- * <li>a list of computer<\li>
+ * <li>a list of computers<\li>
+ * <li>an index representing the current page number</li>
+ * <li>a range of pages displayed</li>
  * </ul>
  * 
  * @author sclaudet
@@ -20,7 +23,7 @@ import com.excilys.cdb.model.Computer;
 public class Page {
 
 	private int nbComputers; // total number of computers
-	private int nbComputerPerPage; // set at instantiation, can't be changed
+	private int nbComputerPerPage;
 	private int nbPages; // total number of pages
 	private List<Computer> computers;
 	private int idx; // the number of the page we are currently on

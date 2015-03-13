@@ -10,12 +10,25 @@ import org.springframework.transaction.annotation.Transactional;
 import com.excilys.cdb.model.User;
 import com.excilys.cdb.persistence.interfaces.UserDAO;
 
+/**
+ * UserDAO makes the connection between the database and the User object
+ * using Criteria
+ * The available method is : loadUserByUsername(String username)
+ * 
+ * @see User
+ * 
+ * @author sclaudet
+ *
+ */
 @Repository
 public class UserDAOImpl implements UserDAO {
 
 	 @Autowired
 	 private SessionFactory sessionFactory;
 	
+	 /**
+	  * @see com.excilys.cdb.persistence.interfaces.UserDAO#loadUserByUsername(String)
+	  */
 	 @Transactional
 	 @Override
 	 public User loadUserByUsername(String username){

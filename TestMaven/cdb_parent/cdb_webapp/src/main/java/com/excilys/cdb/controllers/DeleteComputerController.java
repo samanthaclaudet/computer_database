@@ -18,17 +18,20 @@ import com.excilys.cdb.service.impl.ComputerServiceImpl;
 @RequestMapping("/delete-computer")
 public class DeleteComputerController {
 
-  @Autowired
-  private ComputerServiceImpl computerServiceImpl;
-  
-  @RequestMapping(method=RequestMethod.POST)
-  public String deleteComputers(@RequestParam("selection") String toDelete) {
-    String[] computersId = toDelete.split(",");
-    for (String id : computersId) {
-        int computerId = Integer.parseInt(id);
-        computerServiceImpl.delete(computerId);
-    }
-    return "redirect: dashboard";
-  }
+	@Autowired
+	private ComputerServiceImpl computerServiceImpl;
+ 
+	/**
+	 * Deletes all selected computers
+	 */
+	  @RequestMapping(method=RequestMethod.POST)
+	  public String deleteComputers(@RequestParam("selection") String toDelete) {
+	    String[] computersId = toDelete.split(",");
+	    for (String id : computersId) {
+	        int computerId = Integer.parseInt(id);
+	        computerServiceImpl.delete(computerId);
+	    }
+	    return "redirect: dashboard";
+	  }
 
 }
