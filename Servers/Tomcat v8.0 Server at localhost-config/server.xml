@@ -128,7 +128,7 @@
 <!--       <Context docBase="computer-database" path="/computer-database" reloadable="true" source="org.eclipse.jst.j2ee.server:computer-database"/> -->
 <!--       <Context docBase="computer-database" path="/cdb" reloadable="true" source="org.eclipse.jst.jee.server:computer-database"/> -->
       
-      <Context docBase="cdb_webapp" path="/cdb" reloadable="true" source="org.eclipse.jst.jee.server:cdb_webapp"/></Host>
+      <Context docBase="cdb_webservice" path="/cdb" reloadable="true" source="org.eclipse.jst.jee.server:cdb_webservice"/></Host>
     </Engine>
   </Service>
 </Server>

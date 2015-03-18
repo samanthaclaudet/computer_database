@@ -46,7 +46,7 @@
 			<security:logout/>
 			<security:form-login/>
 		<security:custom-filter ref="digestFilter" after="BASIC_AUTH_FILTER" />
-		<!-- access denied page -->
+ 		<!-- access denied page -->
 		<security:access-denied-handler error-page="/WEB-INF/static/views/403.jsp" />
 	</security:http>
 

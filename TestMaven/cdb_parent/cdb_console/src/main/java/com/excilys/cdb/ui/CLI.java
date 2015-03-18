@@ -1,8 +1,13 @@
 package com.excilys.cdb.ui;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
+
+import javax.xml.namespace.QName;
+import javax.xml.ws.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -10,8 +15,11 @@ import org.springframework.stereotype.Component;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
 import com.excilys.cdb.model.Page;
-import com.excilys.cdb.service.impl.CompanyServiceImpl;
-import com.excilys.cdb.service.impl.ComputerServiceImpl;
+//import com.excilys.cdb.service.impl.CompanyServiceImpl;
+//import com.excilys.cdb.service.impl.ComputerServiceImpl;
+import com.excilys.cdb.web.interfaces.ComputerWeb;
+import com.excilys.cdb.web.interfaces.CompanyWeb;
+import com.excilys.cdb.web.wrapper.ListWrapper;
 
 /**
  * CLI is the user interface of the computer-database program
@@ -31,12 +39,14 @@ import com.excilys.cdb.service.impl.ComputerServiceImpl;
 @Component
 public class CLI {
 	
-	@Autowired
-	private ComputerServiceImpl computerServiceImpl;
-	
-	@Autowired
-	private CompanyServiceImpl companyServiceImpl;
-	
+//	@Autowired
+//	private ComputerServiceImpl computerServiceImpl;
+//	
+//	@Autowired
+//	private CompanyServiceImpl companyServiceImpl;
+
+	private CompanyWeb companyWeb;
+	private ComputerWeb computerWeb;
 	
 	/**
 	 * runProgram becomes false when the user wants to exit the program 
@@ -45,7 +55,30 @@ public class CLI {
 	
 	public Scanner sc= new Scanner(System.in);
 
-	public void run() {
+	public void setComputerWeb(ComputerWeb computerWeb) {
+		this.computerWeb = computerWeb;
+	}
+	public void setCompanyWeb(CompanyWeb companyWeb) {
+		this.companyWeb = companyWeb;
+	}
+	
+	public void run() throws MalformedURLException {
+		
+		URL urlComputer = new URL("http://localhost:8081/cdb/computerPublish?wsdl");
+		QName qnameComputer = new QName("http://impl.web.cdb.excilys.com/",
+				"ComputerWebImplService");
+		Service serviceComputer = Service.create(urlComputer, qnameComputer);
+		ComputerWeb computerWeb = serviceComputer.getPort(ComputerWeb.class);
+
+		URL urlCompany = new URL("http://localhost:8081/cdb/companyPublish?wsdl");
+		QName qnameCompany = new QName("http://impl.web.cdb.excilys.com/",
+				"CompanyWebImplService");
+		Service serviceCompany = Service.create(urlCompany, qnameCompany);
+		CompanyWeb companyWeb = serviceCompany.getPort(CompanyWeb.class);
+	
+		 this.setCompanyWeb(companyWeb);
+		 this.setComputerWeb(computerWeb);
+		
 		do {
 			showMenu();
 			requestTreatment();
@@ -93,13 +126,15 @@ public class CLI {
 				String answer = sc.nextLine();
 				if (answer.toUpperCase().matches("Y")) {
 					// displays result in a page
-					Page p = computerServiceImpl.getPage("", 0, 100, ""); // 100 computers per page
-
+					//Page p = computerServiceImpl.getPage("", 0, 100, ""); // 100 computers per page
+					Page p = computerWeb.getPage("", 0, 100, ""); // 100 computers per page
+					
 					boolean end = false;
 					do {
 						System.out.println(p.toString());
 						end = p.menuPage(sc);	
-						p.setComputers(computerServiceImpl.getPage("", p.getIdx(), 100, "").getComputers());
+						//p.setComputers(computerServiceImpl.getPage("", p.getIdx(), 100, "").getComputers());
+						p.setComputers(computerWeb.getPage("", p.getIdx(), 100, "").getComputers());
 					} while (!end);
 					
 					
@@ -148,9 +183,10 @@ public class CLI {
 	 * @see ComputerService#getAll()
 	 */
 	public void listComputers() {
-		List<Computer> CL;
-		CL = computerServiceImpl.getAll();
-		for(Computer c : CL ) {
+		ListWrapper<Computer> CL;
+		//CL = computerServiceImpl.getAll();
+		CL = computerWeb.getAll();
+		for(Computer c : CL.getList() ) {
 			System.out.println(c);
 		}
 	}
@@ -160,9 +196,10 @@ public class CLI {
 	 * @see CompanyService#getAll()
 	 */
 	public void listCompanies() {
-		List<Company> CL;
-		CL = companyServiceImpl.getAll();
-		for(Company c : CL ) {
+		ListWrapper<Company> CL= companyWeb.getAll();
+		//CL = companyServiceImpl.getAll();
+		//CL = companyWeb.getAll();
+		for(Company c : CL.getList() ) {
 			System.out.println(c);
 		}
 	}
@@ -176,7 +213,8 @@ public class CLI {
 		// check validity of input
 		int id = Util.checkId(sc);
 
-		Computer c = computerServiceImpl.getById(id);
+		//Computer c = computerServiceImpl.getById(id);
+		Computer c = computerWeb.getById(id);
 		if (c != null) {
 			System.out.println(c);
 		} else {
@@ -192,7 +230,8 @@ public class CLI {
 		// put the user input into a Computer object
 		Computer c = setComputerData();
 		System.out.println("Computer to add: " + c);
-		computerServiceImpl.set(c);
+		//computerServiceImpl.set(c);
+		computerWeb.set(c);
 	}
 	
 	/**
@@ -205,11 +244,13 @@ public class CLI {
 		int id = Util.checkId(sc);
 		Computer newc = null;
 		// put the current entry into a Computer object
-		Computer c = computerServiceImpl.getById(id);
+		//Computer c = computerServiceImpl.getById(id);
+		Computer c = computerWeb.getById(id);
 		if (c != null) {
 			// put the user entry into a new Computer object
 			newc = updateComputerData(c);
-			computerServiceImpl.update(newc);
+			//computerServiceImpl.update(newc);
+			computerWeb.update(newc);
 		} else {
 			System.out.println("Wrong id, no computer found");
 		}
@@ -223,7 +264,8 @@ public class CLI {
 		System.out.println("What is the id of the computer you want to delete ?");
 		// check validity of input
 		int id = Util.checkId(sc);
-		computerServiceImpl.delete(id);
+		//computerServiceImpl.delete(id);
+		computerWeb.delete(id);
 	}
 	
 	/**
@@ -234,7 +276,8 @@ public class CLI {
 		System.out.println("What is the id of the company you want to delete ?");
 		// check validity of input
 		int id = Util.checkId(sc);
-		companyServiceImpl.delete(id);
+		//companyServiceImpl.delete(id);
+		companyWeb.delete(id);
 	}
 	
 	/**
@@ -253,7 +296,8 @@ public class CLI {
 		LocalDateTime ldtd = Util.checkDate(sc);
 		System.out.println("Please enter the company id from the list (0 if unknown)");
 		// check validity of input
-		Company cy = Util.checkCompany(this, sc, companyServiceImpl);
+		//Company cy = Util.checkCompany(this, sc, companyServiceImpl);
+		Company cy = Util.checkCompany(this, sc, companyWeb);
 		
 		Computer c = new Computer(name, ldti, ldtd, cy);
 		return c;
@@ -299,7 +343,8 @@ public class CLI {
 		if (answer.toUpperCase().matches("Y")) {
 			System.out.println("Please enter the id of the new company (0 if unknown)");
 			// check validity of input
-			Company cy = Util.checkCompany(this, sc, companyServiceImpl);
+			//Company cy = Util.checkCompany(this, sc, companyServiceImpl);
+			Company cy = Util.checkCompany(this, sc, companyWeb);
 			c.setCompany(cy);
 		}
 		return c;

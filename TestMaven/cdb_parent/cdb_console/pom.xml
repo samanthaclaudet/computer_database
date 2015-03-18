@@ -18,6 +18,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>cdb_binding</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>cdb_webservice</artifactId>
+        </dependency>
         
         <!-- spring -->
         <dependency>
@@ -41,6 +45,12 @@
 		<dependency>
 		    <groupId>org.slf4j</groupId>
 		    <artifactId>jcl-over-slf4j</artifactId>
+		</dependency>
+        
+        <dependency>
+			<groupId>com.sun.xml.ws</groupId>
+			<artifactId>jaxws-rt</artifactId>
+			<version>2.2.10</version>
 		</dependency>
         
     </dependencies>

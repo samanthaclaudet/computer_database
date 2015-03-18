@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.service.impl.CompanyServiceImpl;
+import com.excilys.cdb.web.interfaces.CompanyWeb;
 
 /**
  * The Util class is used to check the validity of the user input The input is
@@ -130,7 +131,7 @@ public class Util {
 	 * @see CompanyService#getById(int)
 	 * @return a valid Company or null
 	 */
-	public static Company checkCompany(CLI cli, Scanner sc, CompanyServiceImpl companyService) {
+	public static Company checkCompany(CLI cli, Scanner sc, CompanyWeb companyService) {
 		boolean validEntry = true;
 		int manufacture = 0;
 		Company cy = null;
