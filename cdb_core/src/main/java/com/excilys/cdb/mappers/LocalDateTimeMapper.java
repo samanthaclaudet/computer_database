@@ -15,10 +15,10 @@ import org.hibernate.engine.spi.SessionImplementor;
 import org.hibernate.type.StandardBasicTypes;
 import org.hibernate.usertype.EnhancedUserType;
 
-public class LocalDateTimeMapper implements EnhancedUserType, Serializable{
+public class LocalDateTimeMapper implements EnhancedUserType, Serializable {
 
   private static final long serialVersionUID = 1L;
-  
+
   @Override
   public Object assemble(Serializable cached, Object obj) throws HibernateException {
     return cached;
@@ -40,7 +40,7 @@ public class LocalDateTimeMapper implements EnhancedUserType, Serializable{
       return true;
     }
     if (x == null || y == null) {
-        return false;
+      return false;
     }
     LocalDateTime dtx = (LocalDateTime) x;
     LocalDateTime dty = (LocalDateTime) y;
@@ -58,27 +58,27 @@ public class LocalDateTimeMapper implements EnhancedUserType, Serializable{
   }
 
   @Override
-  public Object nullSafeGet(ResultSet resultSet, String[] names, SessionImplementor session, Object owner)
-      throws HibernateException, SQLException {
+  public Object nullSafeGet(ResultSet resultSet, String[] names, SessionImplementor session,
+      Object owner) throws HibernateException, SQLException {
     Object timestamp = StandardBasicTypes.TIMESTAMP.nullSafeGet(resultSet, names, session, owner);
     if (timestamp == null) {
-        return null;
+      return null;
     }
     Date ts = (Date) timestamp;
     Instant instant = Instant.ofEpochMilli(ts.getTime());
     return LocalDateTime.ofInstant(instant, ZoneId.systemDefault());
-}
+  }
 
   @Override
-  public void nullSafeSet(PreparedStatement preparedStatement, Object value, int index, SessionImplementor session)
-      throws HibernateException, SQLException {
+  public void nullSafeSet(PreparedStatement preparedStatement, Object value, int index,
+      SessionImplementor session) throws HibernateException, SQLException {
     if (value == null) {
       StandardBasicTypes.TIMESTAMP.nullSafeSet(preparedStatement, null, index, session);
     } else {
-        LocalDateTime ldt = ((LocalDateTime) value);
-        Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
-        Date timestamp = Date.from(instant);
-        StandardBasicTypes.TIMESTAMP.nullSafeSet(preparedStatement, timestamp, index, session);
+      LocalDateTime ldt = ((LocalDateTime) value);
+      Instant instant = ldt.atZone(ZoneId.systemDefault()).toInstant();
+      Date timestamp = Date.from(instant);
+      StandardBasicTypes.TIMESTAMP.nullSafeSet(preparedStatement, timestamp, index, session);
     }
   }
 
@@ -86,7 +86,6 @@ public class LocalDateTimeMapper implements EnhancedUserType, Serializable{
   public Object replace(Object original, Object target, Object owner) throws HibernateException {
     return original;
   }
-
 
   @SuppressWarnings("rawtypes")
   @Override
@@ -96,14 +95,14 @@ public class LocalDateTimeMapper implements EnhancedUserType, Serializable{
 
   @Override
   public int[] sqlTypes() {
-    return new int[]{Types.TIMESTAMP};
+    return new int[] { Types.TIMESTAMP };
   }
 
   @Override
   public String objectToSQLString(Object obj) {
     throw new UnsupportedOperationException();
   }
-  
+
   @Override
   public Object fromXMLString(String val) {
     return LocalDateTime.parse(val);

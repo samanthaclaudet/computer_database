@@ -14,24 +14,23 @@ import org.slf4j.LoggerFactory;
  *
  */
 public enum DatabaseLoader {
-	INSTANCE;
-	
-	private static final Logger logger = LoggerFactory
-			.getLogger(DatabaseLoader.class);
-	
-	public void load() {
-		String line;
-		try {
-			Process p = Runtime.getRuntime().exec("./src/test/resources/script.sh");
-			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			while ((line = input.readLine()) != null) {
-				System.out.println(line);
-			}
-			input.close();
-		} catch (IOException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-			throw new RuntimeException();
-		}
-	}
+  INSTANCE;
+
+  private static final Logger logger = LoggerFactory.getLogger(DatabaseLoader.class);
+
+  public void load() {
+    String line;
+    try {
+      Process p = Runtime.getRuntime().exec("./src/test/resources/script.sh");
+      BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+      while ((line = input.readLine()) != null) {
+        System.out.println(line);
+      }
+      input.close();
+    } catch (IOException e) {
+      logger.error(e.getMessage());
+      e.printStackTrace();
+      throw new RuntimeException();
+    }
+  }
 }

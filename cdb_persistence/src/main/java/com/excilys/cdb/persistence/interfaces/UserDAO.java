@@ -9,12 +9,12 @@ import com.excilys.cdb.model.User;
 */
 public interface UserDAO {
 
-	/**
-	 * Gets a User by its username
-	 * 
-	 * @param username
-	 * @return a User
-	 */
-	public User loadUserByUsername(String username) ;
-	
+  /**
+   * Gets a User by its username
+   * 
+   * @param username
+   * @return a User
+   */
+  public User loadUserByUsername(String username);
+
 }

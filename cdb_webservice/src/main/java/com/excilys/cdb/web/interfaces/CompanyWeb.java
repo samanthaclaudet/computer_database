@@ -9,13 +9,16 @@ import com.excilys.cdb.model.Company;
 import com.excilys.cdb.web.wrapper.ListWrapper;
 
 @WebService
-@SOAPBinding(style = Style.DOCUMENT)
+@SOAPBinding(style = Style.RPC)
 public interface CompanyWeb {
 
-	@WebMethod ListWrapper<Company> getAll();
-	
-	@WebMethod Company getById(int id);
-	
-	@WebMethod void delete(int id);
-	
+  @WebMethod
+  ListWrapper<Company> getAll();
+
+  @WebMethod
+  Company getById(int id);
+
+  @WebMethod
+  void delete(int id);
+
 }

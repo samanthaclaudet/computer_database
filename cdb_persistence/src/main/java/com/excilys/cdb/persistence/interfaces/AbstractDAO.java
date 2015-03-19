@@ -9,18 +9,18 @@ import java.util.List;
  */
 public interface AbstractDAO<T> {
 
-	public List<T> getAll();
+  public List<T> getAll();
 
-	public T getById(int id);
+  public T getById(int id);
 
-	public default void set(T t) {
-		System.out.println("Not implemented");
-	}
+  public default void set(T t) {
+    System.out.println("Not implemented");
+  }
 
-	public default void update(T t) {
-		System.out.println("Not implemented");
-	}
+  public default void update(T t) {
+    System.out.println("Not implemented");
+  }
 
-	public void delete(int id);
-	
+  public void delete(int id);
+
 }

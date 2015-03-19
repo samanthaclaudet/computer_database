@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.exceptions.SQLRuntimeException;
 import com.excilys.cdb.model.Company;
-import com.excilys.cdb.persistence.impl.CompanyDAOImpl;
-import com.excilys.cdb.persistence.impl.ComputerDAOImpl;
+import com.excilys.cdb.persistence.interfaces.CompanyDAO;
+import com.excilys.cdb.persistence.interfaces.ComputerDAO;
 import com.excilys.cdb.service.interfaces.CompanyService;
 
 /**
@@ -21,34 +21,38 @@ import com.excilys.cdb.service.interfaces.CompanyService;
 @Service
 public class CompanyServiceImpl implements CompanyService {
 
-	@Autowired
-	private CompanyDAOImpl companyDAOImpl;
-	
-	@Autowired
-	private ComputerDAOImpl computerDAOImpl;
+  @Autowired
+  private CompanyDAO  companyDAO;
 
-	 /**
-	  * @see com.excilys.cdb.service.interfaces.CompanyService#getAll()
-	  */
-	public List<Company> getAll() {
-		return companyDAOImpl.getAll();
-	}
+  @Autowired
+  private ComputerDAO computerDAO;
 
+  /**
+   * @see com.excilys.cdb.service.interfaces.CompanyService#getAll()
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public List<Company> getAll() {
+    return companyDAO.getAll();
+  }
 
-	 /**
-	  * @see com.excilys.cdb.service.interfaces.CompanyService#getById(int)
-	  */
-	public Company getById(int id) {
-		return companyDAOImpl.getById(id);
-	}
+  /**
+   * @see com.excilys.cdb.service.interfaces.CompanyService#getById(int)
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public Company getById(int id) {
+    return companyDAO.getById(id);
+  }
 
-	 /**
-	  * @see com.excilys.cdb.service.interfaces.CompanyService#delete(int)
-	  */
-	@Transactional(rollbackFor=SQLRuntimeException.class)
-	public void delete(int id) {
-		computerDAOImpl.deleteFromCompany(id); // deletes all the computer with that company first
-		companyDAOImpl.delete(id); // deletes the company
-	}
-	
+  /**
+   * @see com.excilys.cdb.service.interfaces.CompanyService#delete(int)
+   */
+  @Override
+  @Transactional(rollbackFor = SQLRuntimeException.class)
+  public void delete(int id) {
+    computerDAO.deleteFromCompany(id); // deletes all the computer with that company first
+    companyDAO.delete(id); // deletes the company
+  }
+
 }

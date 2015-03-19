@@ -8,7 +8,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.exceptions.SQLRuntimeException;
 import com.excilys.cdb.model.Company;
@@ -31,40 +30,38 @@ import com.excilys.cdb.persistence.interfaces.CompanyDAO;
  */
 @Repository
 public class CompanyDAOImpl implements CompanyDAO {
-	
-    @Autowired
-    private SessionFactory sessionFactory;
 
-	 /**
-	  * @see com.excilys.cdb.persistence.interfaces.CompanyDAO#getAll()
-	  */
-	@SuppressWarnings("unchecked")
-	@Transactional
-	@Override
-	public List<Company> getAll() {
-	    return sessionFactory.getCurrentSession().createCriteria(Company.class).list();
-	}
+  @Autowired
+  private SessionFactory sessionFactory;
 
-	 /**
-	  * @see com.excilys.cdb.persistence.interfaces.CompanyDAO#getById(int)
-	  */
-    @Transactional
-    @Override
-	public Company getById(int id) {
-		Criteria cr = sessionFactory.getCurrentSession().createCriteria(Company.class);
-		return (Company) cr.add(Restrictions.eq("id", id)).uniqueResult();
-	}
-	
-	 /**
-	  * @see com.excilys.cdb.persistence.interfaces.CompanyDAO#delete(int)
-	  */
-    @Override
-	public void delete(int id) throws SQLRuntimeException{
-        try {
-            sessionFactory.getCurrentSession().delete(this.getById(id));
-        } catch (DataAccessException e) {
-            throw new SQLRuntimeException();
-        }
-	}
+  /**
+   * @see com.excilys.cdb.persistence.interfaces.CompanyDAO#getAll()
+   */
+  @SuppressWarnings("unchecked")
+  @Override
+  public List<Company> getAll() {
+    return sessionFactory.getCurrentSession().createCriteria(Company.class).list();
+  }
+
+  /**
+   * @see com.excilys.cdb.persistence.interfaces.CompanyDAO#getById(int)
+   */
+  @Override
+  public Company getById(int id) {
+    Criteria cr = sessionFactory.getCurrentSession().createCriteria(Company.class);
+    return (Company) cr.add(Restrictions.eq("id", id)).uniqueResult();
+  }
+
+  /**
+   * @see com.excilys.cdb.persistence.interfaces.CompanyDAO#delete(int)
+   */
+  @Override
+  public void delete(int id) throws SQLRuntimeException {
+    try {
+      sessionFactory.getCurrentSession().delete(this.getById(id));
+    } catch (DataAccessException e) {
+      throw new SQLRuntimeException();
+    }
+  }
 
 }

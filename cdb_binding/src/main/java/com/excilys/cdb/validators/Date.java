@@ -12,9 +12,10 @@ import javax.validation.Payload;
 @Target(value = ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Date {
-	String message() default "Date format incorrect";
-	
-	Class<?>[] groups() default {};
-	
-	Class<? extends Payload>[] payload() default {};
+
+  String message() default "Date format incorrect";
+
+  Class<?>[] groups() default {};
+
+  Class<? extends Payload>[] payload() default {};
 }

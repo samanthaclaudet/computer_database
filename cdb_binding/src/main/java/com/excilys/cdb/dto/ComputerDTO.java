@@ -16,90 +16,90 @@ import com.excilys.cdb.validators.Date;
  * @see com.excilys.cdb.model.Computer
  */
 @Component
-public class ComputerDTO implements Serializable{
+public class ComputerDTO implements Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	private int id;
-	@NotBlank
-	private String name;
-	@Date
-	private String introduced;
-	@Date
-	private String discontinued;
-	private Company company;
+  private static final long serialVersionUID = 1L;
 
-	public ComputerDTO() {
-		this.id = 0;
-		this.name = "";
-		this.introduced = null;
-		this.discontinued = null;
-		this.company = null;
-	}
+  private int               id;
+  @NotBlank
+  private String            name;
+  @Date
+  private String            introduced;
+  @Date
+  private String            discontinued;
+  private Company           company;
 
-	public ComputerDTO(int id, String name, String introduced, String discontinued, Company company) {
-		this.id = id;
-		this.name = name;
-		this.introduced = introduced;
-		this.discontinued = discontinued;
-		this.company = company;
-	}
+  public ComputerDTO() {
+    this.id = 0;
+    this.name = "";
+    this.introduced = null;
+    this.discontinued = null;
+    this.company = null;
+  }
 
-	public int getId() {
-		return id;
-	}
+  public ComputerDTO(int id, String name, String introduced, String discontinued, Company company) {
+    this.id = id;
+    this.name = name;
+    this.introduced = introduced;
+    this.discontinued = discontinued;
+    this.company = company;
+  }
 
-	public void setId(int id) {
-		this.id = id;
-	}
+  public int getId() {
+    return id;
+  }
 
-	public String getName() {
-		return name;
-	}
+  public void setId(int id) {
+    this.id = id;
+  }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+  public String getName() {
+    return name;
+  }
 
-	public String getIntroduced() {
-		return introduced;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	public void setIntroduced(String introduced) {
-		this.introduced = introduced;
-	}
+  public String getIntroduced() {
+    return introduced;
+  }
 
-	public String getDiscontinued() {
-		return discontinued;
-	}
+  public void setIntroduced(String introduced) {
+    this.introduced = introduced;
+  }
 
-	public void setDiscontinued(String discontinued) {
-		this.discontinued = discontinued;
-	}
+  public String getDiscontinued() {
+    return discontinued;
+  }
 
-	public Company getCompany() {
-		return company;
-	}
+  public void setDiscontinued(String discontinued) {
+    this.discontinued = discontinued;
+  }
 
-	public void setCompany(Company company) {
-		this.company = company;
-	}
+  public Company getCompany() {
+    return company;
+  }
 
-	public String toString() {
-		String computerToString = "Computer #" + this.id;
-		computerToString += "\t name : " + this.name;
-		if (this.introduced != null)
-			computerToString += "\t\t introduced : " + this.introduced;
-		else
-			computerToString += "\t\t introduced : null";
-		if (this.discontinued != null)
-			computerToString += "\t\t discontinued : " + this.discontinued;
-		else
-			computerToString += "\t\t discontinued : null";
-		if (this.company != null)
-			computerToString += "\t\t company : " + this.company.toString();
-		else
-			computerToString += "\t\t company : null";
-		return computerToString;
-	}
+  public void setCompany(Company company) {
+    this.company = company;
+  }
+
+  public String toString() {
+    String computerToString = "Computer #" + this.id;
+    computerToString += "\t name : " + this.name;
+    if (this.introduced != null)
+      computerToString += "\t\t introduced : " + this.introduced;
+    else
+      computerToString += "\t\t introduced : null";
+    if (this.discontinued != null)
+      computerToString += "\t\t discontinued : " + this.discontinued;
+    else
+      computerToString += "\t\t discontinued : null";
+    if (this.company != null)
+      computerToString += "\t\t company : " + this.company.toString();
+    else
+      computerToString += "\t\t company : null";
+    return computerToString;
+  }
 }

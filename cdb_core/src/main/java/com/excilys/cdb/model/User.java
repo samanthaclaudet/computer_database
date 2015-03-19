@@ -20,62 +20,62 @@ import javax.persistence.Table;
 @Table(name = "users")
 public class User {
 
-	@Id
-	@Column(name="username")
-	private String username;
-	    
-	@Column(name = "password")
-	private String password;
-	
-	@Column(name = "role")
-	private String role;
+  @Id
+  @Column(name = "username")
+  private String username;
 
-	/**
-	 * 
-	 * @return a username
-	 */
-	public String getUsername() {
-		return username;
-	}
+  @Column(name = "password")
+  private String password;
 
-	/**
-	 * 
-	 * @param username
-	 */
-	public void setUsername(String username) {
-		this.username = username;
-	}
+  @Column(name = "role")
+  private String role;
 
-	/**
-	 * 
-	 * @return a password
-	 */
-	public String getPassword() {
-		return password;
-	}
+  /**
+   * 
+   * @return a username
+   */
+  public String getUsername() {
+    return username;
+  }
 
-	/**
-	 * 
-	 * @param password
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
+  /**
+   * 
+   * @param username
+   */
+  public void setUsername(String username) {
+    this.username = username;
+  }
 
-	/**
-	 * 
-	 * @return a role
-	 */
-	public String getRole() {
-		return role;
-	}
+  /**
+   * 
+   * @return a password
+   */
+  public String getPassword() {
+    return password;
+  }
 
-	/**
-	 * 
-	 * @param role
-	 */
-	public void setRole(String role) {
-		this.role = role;
-	}
-	
+  /**
+   * 
+   * @param password
+   */
+  public void setPassword(String password) {
+    this.password = password;
+  }
+
+  /**
+   * 
+   * @return a role
+   */
+  public String getRole() {
+    return role;
+  }
+
+  /**
+   * 
+   * @param role
+   */
+  public void setRole(String role) {
+    this.role = role;
+  }
+
 }

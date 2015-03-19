@@ -9,9 +9,10 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.model.User;
-import com.excilys.cdb.persistence.impl.UserDAOImpl;
+import com.excilys.cdb.persistence.interfaces.UserDAO;
 import com.excilys.cdb.service.interfaces.UserService;
 
 /**
@@ -21,26 +22,28 @@ import com.excilys.cdb.service.interfaces.UserService;
  *
  */
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
-	@Autowired
-	private UserDAOImpl userDAOImpl;
+  @Autowired
+  private UserDAO userDAO;
 
-	 /**
-	  * @see com.excilys.cdb.service.interfaces.UserService#loadUserByUsername(String)
-	  */
-	@Override
-	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		User user = userDAOImpl.loadUserByUsername(username);
-		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-		
-		authorities.add(new SimpleGrantedAuthority(user.getRole()));
-		if (user.getRole().equals("ROLE_ADMIN")) {
-			authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
-		}
-		return new org.springframework.security.core.userdetails.User(user.getUsername(), user.getPassword(),
-				true, true, true, true, authorities);
+  /**
+   * @see com.excilys.cdb.service.interfaces.UserService#loadUserByUsername(String)
+   */
+  @Override
+  @Transactional(readOnly = true)
+  public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    User user = userDAO.loadUserByUsername(username);
+    List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
 
-	}
-	
+    authorities.add(new SimpleGrantedAuthority(user.getRole()));
+    if (user.getRole().equals("ROLE_ADMIN")) {
+      // admin is also user
+      authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+    }
+    return new org.springframework.security.core.userdetails.User(user.getUsername(),
+        user.getPassword(), true, true, true, true, authorities);
+
+  }
+
 }

@@ -18,24 +18,23 @@ import org.springframework.context.MessageSource;
  */
 public class DateValidator implements ConstraintValidator<Date, String> {
 
-	@Autowired
-	private MessageSource message;
-	
-	@Override
-	public void initialize(Date arg0) {
-	}
+  @Autowired
+  private MessageSource message;
 
-	@Override
-	public boolean isValid(String value, ConstraintValidatorContext context) {
-		if (value.isEmpty()) {
-			return true;
-		}
+  @Override
+  public void initialize(Date arg0) {}
 
-		Locale userLocale = LocaleContextHolder.getLocale();
-		String regex = message.getMessage("label.regex", null, userLocale);
-		Pattern pattern = Pattern.compile(regex);
-		boolean bool = pattern.matcher(value).matches();
-		return bool;
-	}
+  @Override
+  public boolean isValid(String value, ConstraintValidatorContext context) {
+    if (value.isEmpty()) {
+      return true;
+    }
+
+    Locale userLocale = LocaleContextHolder.getLocale();
+    String regex = message.getMessage("label.regex", null, userLocale);
+    Pattern pattern = Pattern.compile(regex);
+    boolean bool = pattern.matcher(value).matches();
+    return bool;
+  }
 
 }

@@ -30,148 +30,127 @@ import com.excilys.cdb.web.interfaces.CompanyWeb;
  */
 @Component
 public class Util {
-	
-	@Autowired
-	private CompanyServiceImpl companyServiceImpl;
-	
-	/**
-	 * LocalDateTime must follow the pattern "yyyy-mm-dd HH:mm"
-	 */
-	private static final String DATE_REGEX = "^(19|20)[0-9][0-9](-)((0[1-9])|(1[0-2]))(-)((0[1-9])|([1-2][0-9])|(3[0-1]))(T|\\s)(([0-1][0-9])|(2[0-3])):([0-5][0-9])";
-	private static final Pattern P = Pattern.compile(DATE_REGEX);
-	private static final DateTimeFormatter FORMATTER = DateTimeFormatter
-			.ofPattern("yyyy-MM-dd HH:mm");
 
+  @Autowired
+  private CompanyServiceImpl             companyServiceImpl;
 
-	
-	private static final Logger logger = LoggerFactory.getLogger(Util.class);
+  /**
+   * LocalDateTime must follow the pattern "yyyy-mm-dd HH:mm"
+   */
+  private static final String            DATE_REGEX = "^(19|20)[0-9][0-9](-)((0[1-9])|(1[0-2]))(-)((0[1-9])|([1-2][0-9])|(3[0-1]))(T|\\s)(([0-1][0-9])|(2[0-3])):([0-5][0-9])";
+  private static final Pattern           P          = Pattern.compile(DATE_REGEX);
+  private static final DateTimeFormatter FORMATTER  = DateTimeFormatter
+                                                        .ofPattern("yyyy-MM-dd HH:mm");
 
-	/**
-	 * Check if the user input is a valid int
-	 * 
-	 * @param sc
-	 *            the scanner
-	 * @return a valid int
-	 */
-	public static int checkId(Scanner sc) {
-		int id = 0;
+  private static final Logger            logger     = LoggerFactory.getLogger(Util.class);
 
-		while (!sc.hasNextInt()) {
-			System.out.println("Non valid, please enter an integer");
-			sc.nextLine();
-		}
-		String idx = sc.nextLine();
-		try {
-			id = Integer.parseInt(idx);
-		} catch (NumberFormatException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-			throw new RuntimeException();
-		}
-		return id;
-	}
+  /**
+   * Check if the user input is a valid int
+   * 
+   * @param sc
+   *            the scanner
+   * @return a valid int
+   */
+  public static int checkId(Scanner sc) {
+    int id = 0;
 
-	/**
-	 * Check if the user input is a valid date or null
-	 * 
-	 * @param sc
-	 *            the scanner
-	 * @return a valid LocalDateTime or null
-	 */
-	public static LocalDateTime checkDate(Scanner sc) {
+    while (!sc.hasNextInt()) {
+      System.out.println("Non valid, please enter an integer");
+      sc.nextLine();
+    }
+    String idx = sc.nextLine();
+    try {
+      id = Integer.parseInt(idx);
+    } catch (NumberFormatException e) {
+      logger.error(e.getMessage());
+      e.printStackTrace();
+      throw new RuntimeException();
+    }
+    return id;
+  }
 
-		LocalDateTime ldt = null;
+  /**
+   * Check if the user input is a valid date or null
+   * 
+   * @param sc
+   *            the scanner
+   * @return a valid LocalDateTime or null
+   */
+  public static LocalDateTime checkDate(Scanner sc) {
 
-		String date = sc.nextLine();
-		if (date.equals("null")) {
-			return null;
-		}
+    LocalDateTime ldt = null;
 
-		while (!P.matcher(date).find()) {
-			System.out
-					.println("Non valid format, please enter a date with format yyyy-MM-dd HH:mm or null");
-			date = sc.nextLine();
-			if (date.equals("null")) {
-				return null;
-			}
-		}
-		try {
-			ldt = LocalDateTime.parse(date, FORMATTER);
-		} catch (DateTimeException e) {
-			logger.error(e.getMessage());
-			e.printStackTrace();
-			throw new RuntimeException();
-		}
-		return ldt;
-	}
+    String date = sc.nextLine();
+    if (date.equals("null")) {
+      return null;
+    }
 
-	/**
-	 * Check if the user input is a valid date or null
-	 * 
-	 * @param date
-	 *            a String
-	 * @return a valid LocalDateTime or null
-	 */
-	public static LocalDateTime checkDate(String date) {
-		LocalDateTime ldt = null;
-		date = date.replace('T', ' ');
-		if (P.matcher(date).find()) {
-			ldt = LocalDateTime.parse(date, FORMATTER);
-		}
-		return ldt;
-	}
+    while (!P.matcher(date).find()) {
+      System.out
+          .println("Non valid format, please enter a date with format yyyy-MM-dd HH:mm or null");
+      date = sc.nextLine();
+      if (date.equals("null")) {
+        return null;
+      }
+    }
+    try {
+      ldt = LocalDateTime.parse(date, FORMATTER);
+    } catch (DateTimeException e) {
+      logger.error(e.getMessage());
+      e.printStackTrace();
+      throw new RuntimeException();
+    }
+    return ldt;
+  }
 
-	/**
-	 * Check if the user input matches a valid Company
-	 * 
-	 * @param cli
-	 * @param sc
-	 *            the scanner
-	 * @param companyService
-	 * @see CompanyService#getById(int)
-	 * @return a valid Company or null
-	 */
-	public static Company checkCompany(CLI cli, Scanner sc, CompanyWeb companyService) {
-		boolean validEntry = true;
-		int manufacture = 0;
-		Company cy = null;
-		do {
-			// you can only choose an id from the list
-			cli.listCompanies();
-			manufacture = checkId(sc);
+  /**
+   * Check if the user input is a valid date or null
+   * 
+   * @param date
+   *            a String
+   * @return a valid LocalDateTime or null
+   */
+  public static LocalDateTime checkDate(String date) {
+    LocalDateTime ldt = null;
+    date = date.replace('T', ' ');
+    if (P.matcher(date).find()) {
+      ldt = LocalDateTime.parse(date, FORMATTER);
+    }
+    return ldt;
+  }
 
-			if (manufacture == 0) {
-				return null;
-			} else if (manufacture > 0) {
-				cy = companyService.getById(manufacture);
-			}
-			if (cy == null || manufacture < 0) {
-				System.out
-						.println("Wrong id, no company found ! Please enter a new value \n");
-				validEntry = false;
-			} else {
-				validEntry = true;
-			}
-		} while (!validEntry);
-		return cy;
-	}
+  /**
+   * Check if the user input matches a valid Company
+   * 
+   * @param cli
+   * @param sc
+   *            the scanner
+   * @param companyService
+   * @see CompanyService#getById(int)
+   * @return a valid Company or null
+   */
+  public static Company checkCompany(CLI cli, Scanner sc, CompanyWeb companyService) {
+    boolean validEntry = true;
+    int manufacture = 0;
+    Company cy = null;
+    do {
+      // you can only choose an id from the list
+      cli.listCompanies();
+      manufacture = checkId(sc);
 
-	/**
-	 * Displays "success" or "failure" depending of the output of the query
-	 * 
-	 * @param queryExecuted
-	 *            the value returned by the method executeUpdate() of the
-	 *            PreparedStatement
-	 */
-	public static boolean checkSuccess(int queryExecuted) {
-		System.out.print("Query executed ? ");
-		if (queryExecuted == 0) {
-			System.out.println("Failed");
-			return false;
-		} else {
-			System.out.println("Success");
-			return true;
-		}
-	}
+      if (manufacture == 0) {
+        return null;
+      } else if (manufacture > 0) {
+        cy = companyService.getById(manufacture);
+      }
+      if (cy == null || manufacture < 0) {
+        System.out.println("Wrong id, no company found ! Please enter a new value \n");
+        validEntry = false;
+      } else {
+        validEntry = true;
+      }
+    } while (!validEntry);
+    return cy;
+  }
 
 }

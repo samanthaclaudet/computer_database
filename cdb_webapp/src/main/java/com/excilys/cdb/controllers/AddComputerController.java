@@ -4,8 +4,8 @@ import com.excilys.cdb.dto.ComputerDTO;
 import com.excilys.cdb.dto.DTOMapper;
 import com.excilys.cdb.model.Company;
 import com.excilys.cdb.model.Computer;
-import com.excilys.cdb.service.impl.CompanyServiceImpl;
-import com.excilys.cdb.service.impl.ComputerServiceImpl;
+import com.excilys.cdb.service.interfaces.CompanyService;
+import com.excilys.cdb.service.interfaces.ComputerService;
 
 import java.util.List;
 
@@ -30,45 +30,45 @@ import org.springframework.web.bind.annotation.RequestParam;
 @RequestMapping("/add-computer")
 public class AddComputerController {
 
-	@Autowired
-	private ComputerServiceImpl computerServiceImpl;
-	
-	@Autowired
-	private CompanyServiceImpl companyServiceImpl;
-	
-	@Autowired
-	private DTOMapper dtoMapper;
-	
-	/**
-	 * Displays all the companies in the drop-down menu
-	 */
-	@RequestMapping(method=RequestMethod.GET)
-	public String displayCompanies(ModelMap map) {	
-		List<Company> companies = companyServiceImpl.getAll();
-		map.addAttribute("companies", companies);
-		map.addAttribute("computerDTO", new ComputerDTO());
-		return "addComputer";
-	}
+  @Autowired
+  private ComputerService computerService;
 
-	/**
-	 * Adds a computer to the database
-	 */
-	@RequestMapping(method=RequestMethod.POST)
-	public String addComputerToDatabase(@ModelAttribute("computerDTO") @Valid ComputerDTO computerDTO,
-			BindingResult bindingResult,
-			@RequestParam("companyId") int companyId, ModelMap map) {
+  @Autowired
+  private CompanyService  companyService;
 
-		if (bindingResult.hasErrors()) {
-			List<Company> companies = companyServiceImpl.getAll();
-			map.addAttribute("companies", companies);
-			return "addComputer";
-		}
-		
-		Company company =  companyServiceImpl.getById(companyId);
-		computerDTO.setCompany(company);
-		Computer c = dtoMapper.DTOToComputer(computerDTO);
-		computerServiceImpl.set(c);
-		return "redirect: dashboard";
-	}
+  @Autowired
+  private DTOMapper       dtoMapper;
+
+  /**
+   * Displays all the companies in the drop-down menu
+   */
+  @RequestMapping(method = RequestMethod.GET)
+  public String displayCompanies(ModelMap map) {
+    List<Company> companies = companyService.getAll();
+    map.addAttribute("companies", companies);
+    map.addAttribute("computerDTO", new ComputerDTO());
+    return "addComputer";
+  }
+
+  /**
+   * Adds a computer to the database
+   */
+  @RequestMapping(method = RequestMethod.POST)
+  public String addComputerToDatabase(
+      @ModelAttribute("computerDTO") @Valid ComputerDTO computerDTO, BindingResult bindingResult,
+      @RequestParam("companyId") int companyId, ModelMap map) {
+
+    if (bindingResult.hasErrors()) {
+      List<Company> companies = companyService.getAll();
+      map.addAttribute("companies", companies);
+      return "addComputer";
+    }
+
+    Company company = companyService.getById(companyId);
+    computerDTO.setCompany(company);
+    Computer c = dtoMapper.DTOToComputer(computerDTO);
+    computerService.set(c);
+    return "redirect: dashboard";
+  }
 
 }

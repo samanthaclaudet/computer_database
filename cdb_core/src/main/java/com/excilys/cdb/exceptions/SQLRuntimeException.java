@@ -8,13 +8,14 @@ package com.excilys.cdb.exceptions;
  */
 public class SQLRuntimeException extends RuntimeException {
 
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
 
-	public SQLRuntimeException() { }
-	
-	public SQLRuntimeException(String message) {
-		super(message);
-		System.out.println("An error occurred,the company was not deleted, the transaction is being rolled back");
-	}
-	
+  public SQLRuntimeException() {}
+
+  public SQLRuntimeException(String message) {
+    super(message);
+    System.out
+        .println("An error occurred,the company was not deleted, the transaction is being rolled back");
+  }
+
 }

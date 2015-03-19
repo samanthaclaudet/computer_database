@@ -13,7 +13,6 @@ import org.hibernate.sql.JoinType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.excilys.cdb.exceptions.SQLRuntimeException;
 import com.excilys.cdb.model.Computer;
@@ -49,7 +48,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 	 /**
 	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#getNbComputers(String)
 	  */
-	@Transactional
 	@Override
 	public int getNbComputers(String name) {
 	  name = "%" + name + "%";
@@ -69,7 +67,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#getAll()
 	  */
 	@SuppressWarnings("unchecked")
-	@Transactional
 	@Override
 	public List<Computer> getAll() {
 		return sessionFactory.getCurrentSession().createCriteria(Computer.class).list();
@@ -78,7 +75,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 	 /**
 	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#getById(int)
 	  */
-	@Transactional
 	@Override
 	public Computer getById(int id) {
 	    Criteria cr = sessionFactory.getCurrentSession().createCriteria(Computer.class);
@@ -89,7 +85,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#getPage(String, int, int, String)
 	  */
     @SuppressWarnings("unchecked")
-	@Transactional
     @Override
 	public Page getPage(String name, int idx, int size, String orderBy) {
 		switch (orderBy) {
@@ -131,7 +126,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 	 /**
 	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#set(Computer)
 	  */
-    @Transactional
     @Override
     public void set(Computer c) {
         sessionFactory.getCurrentSession().save(c); 
@@ -140,7 +134,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 	 /**
 	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#update(Computer)
 	  */
-    @Transactional
     @Override
     public void update(Computer c) {
         sessionFactory.getCurrentSession().update(c);
@@ -150,7 +143,6 @@ public class ComputerDAOImpl implements ComputerDAO {
 	 /**
 	  * @see com.excilys.cdb.persistence.interfaces.ComputerDAO#delete(int)
 	  */
-	@Transactional
 	@Override
 	public void delete(int id) {
         sessionFactory.getCurrentSession().delete(this.getById(id));

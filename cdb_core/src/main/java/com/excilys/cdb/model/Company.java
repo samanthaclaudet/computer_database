@@ -20,99 +20,99 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "company")
-public class Company implements Serializable{
-  
-	private static final long serialVersionUID = 1L;
+public class Company implements Serializable {
 
-	@Id
-    @GeneratedValue
-    @Column(name="id")
-	private int id;
-    
-    @Column(name = "name")
-	private String name;
+  private static final long serialVersionUID = 1L;
 
-	public Company() {
-		this.id = 0;
-		this.name = null;
-	}
+  @Id
+  @GeneratedValue
+  @Column(name = "id")
+  private int               id;
 
-	/**
-	 * 
-	 * @param id
-	 * @param name
-	 */
-	public Company(int id, String name) {
-		this.id = id;
-		this.name = name;
-	}
+  @Column(name = "name")
+  private String            name;
 
-	/**
-	 * 
-	 * @return id (int)
-	 */
-	public int getId() {
-		return id;
-	}
+  public Company() {
+    this.id = 0;
+    this.name = null;
+  }
 
-	/**
-	 * 
-	 * @param id
-	 */
-	public void setId (int id) {
-	  this.id = id;
-	}
-	
-	/**
-	 * 
-	 * @return name (String)
-	 */
-	public String getName() {
-		return name;
-	}
+  /**
+   * 
+   * @param id
+   * @param name
+   */
+  public Company(int id, String name) {
+    this.id = id;
+    this.name = name;
+  }
 
-	/**
+  /**
+   * 
+   * @return id (int)
+   */
+  public int getId() {
+    return id;
+  }
+
+  /**
+   * 
+   * @param id
+   */
+  public void setId(int id) {
+    this.id = id;
+  }
+
+  /**
+   * 
+   * @return name (String)
+   */
+  public String getName() {
+    return name;
+  }
+
+  /**
      * 
      * @param name
      */
-    public void setName (String name) {
-      this.name = name;
-    }
-	
-	/**
-	 * The representation is "Company#ID	name : NAME"
-	 */
-	@Override
-	public String toString() {
-		return "Company #" + this.id + "\t name : " + this.name;
-	}
+  public void setName(String name) {
+    this.name = name;
+  }
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + id;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		return result;
-	}
+  /**
+   * The representation is "Company#ID	name : NAME"
+   */
+  @Override
+  public String toString() {
+    return "Company #" + this.id + "\t name : " + this.name;
+  }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Company other = (Company) obj;
-		if (id != other.id)
-			return false;
-		if (name == null) {
-			if (other.name != null)
-				return false;
-		} else if (!name.equals(other.name))
-			return false;
-		return true;
-	}
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = prime * result + id;
+    result = prime * result + ((name == null) ? 0 : name.hashCode());
+    return result;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (obj == null)
+      return false;
+    if (getClass() != obj.getClass())
+      return false;
+    Company other = (Company) obj;
+    if (id != other.id)
+      return false;
+    if (name == null) {
+      if (other.name != null)
+        return false;
+    } else if (!name.equals(other.name))
+      return false;
+    return true;
+  }
 
 }

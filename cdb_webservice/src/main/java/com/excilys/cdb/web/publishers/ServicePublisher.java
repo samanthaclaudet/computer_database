@@ -5,8 +5,8 @@ import javax.xml.ws.Endpoint;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.excilys.cdb.dto.DTOMapper;
-import com.excilys.cdb.service.impl.CompanyServiceImpl;
-import com.excilys.cdb.service.impl.ComputerServiceImpl;
+import com.excilys.cdb.service.interfaces.CompanyService;
+import com.excilys.cdb.service.interfaces.ComputerService;
 import com.excilys.cdb.web.impl.CompanyWebImpl;
 import com.excilys.cdb.web.impl.ComputerWebImpl;
 
@@ -16,13 +16,13 @@ public class ServicePublisher {
 		System.out.println("Publishing...");
 		ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("/application-context-webservice.xml");
 
-		CompanyServiceImpl companyServiceImpl = (CompanyServiceImpl) context.getBean(CompanyServiceImpl.class);
-		Endpoint.publish("http://localhost:8081/cdb/companyPublish", new CompanyWebImpl(companyServiceImpl));
+		CompanyService companyService = (CompanyService) context.getBean(CompanyService.class);
+		Endpoint.publish("http://localhost:8081/cdb/companyPublish", new CompanyWebImpl(companyService));
 		
-		ComputerServiceImpl computerServiceImpl = (ComputerServiceImpl) context.getBean(ComputerServiceImpl.class);
+		ComputerService computerService = (ComputerService) context.getBean(ComputerService.class);
 		DTOMapper dtoMapper = (DTOMapper) context.getBean(DTOMapper.class);
-		Endpoint.publish("http://localhost:8081/cdb/computerPublish", new ComputerWebImpl(computerServiceImpl, dtoMapper));
-		//context.close();
+		Endpoint.publish("http://localhost:8081/cdb/computerPublish", new ComputerWebImpl(computerService, dtoMapper));
+		
 		System.out.println("Published !");
 	}
 

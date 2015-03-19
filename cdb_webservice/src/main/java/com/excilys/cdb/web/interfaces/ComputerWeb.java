@@ -10,23 +10,31 @@ import com.excilys.cdb.model.Page;
 import com.excilys.cdb.web.wrapper.ListWrapper;
 
 @WebService
-@SOAPBinding(style = Style.DOCUMENT)
+@SOAPBinding(style = Style.RPC)
 public interface ComputerWeb {
 
-	@WebMethod String getHelloWorldAsString(String name);
+  @WebMethod
+  String getHelloWorldAsString(String name);
 
-	@WebMethod int getNbComputers();
+  @WebMethod
+  int getNbComputers();
 
-	@WebMethod ListWrapper<ComputerDTO> getAll();
+  @WebMethod
+  ListWrapper<ComputerDTO> getAll();
 
-	@WebMethod ComputerDTO getById(int id);
+  @WebMethod
+  ComputerDTO getById(int id);
 
-	@WebMethod Page getPage(String name, int idx, int size, String orderBy);
+  @WebMethod
+  Page getPage(String name, int idx, int size, String orderBy);
 
-	@WebMethod void set(ComputerDTO c);
+  @WebMethod
+  void set(ComputerDTO c);
 
-	@WebMethod void update(ComputerDTO c);
+  @WebMethod
+  void update(ComputerDTO c);
 
-	@WebMethod void delete(int id);
+  @WebMethod
+  void delete(int id);
 
 }
