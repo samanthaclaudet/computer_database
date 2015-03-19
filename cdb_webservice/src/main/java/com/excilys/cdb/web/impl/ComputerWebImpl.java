@@ -24,11 +24,6 @@ public class ComputerWebImpl implements ComputerWeb {
   }
 
   @Override
-  public String getHelloWorldAsString(String name) {
-    return "Hello World JAX-WS " + name;
-  }
-
-  @Override
   public int getNbComputers() {
     return computerService.getNbComputers();
   }

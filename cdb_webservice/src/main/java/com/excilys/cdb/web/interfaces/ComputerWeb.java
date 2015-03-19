@@ -14,9 +14,6 @@ import com.excilys.cdb.web.wrapper.ListWrapper;
 public interface ComputerWeb {
 
   @WebMethod
-  String getHelloWorldAsString(String name);
-
-  @WebMethod
   int getNbComputers();
 
   @WebMethod
