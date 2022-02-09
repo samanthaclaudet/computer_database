@@ -36,7 +36,7 @@
 		<spring.version>4.1.5.RELEASE</spring.version>
 		<spring.security.version>3.2.6.RELEASE</spring.security.version>
 		<jersey-version>2.16</jersey-version>
-		<hibernate.version>4.3.8.Final</hibernate.version>
+		<hibernate.version>5.4.24.Final</hibernate.version>
 		<maven-compiler-plugin-version>3.1</maven-compiler-plugin-version>
 		<selenium-maven-plugin-version>1.0.1</selenium-maven-plugin-version>
 		<maven-surefire-plugin-version>2.5</maven-surefire-plugin-version>
